@@ -1,4 +1,4 @@
-// implementation of simple singly linked list in C++
+// implementation of simple singly linked list in C++ (templated version)
 #include<iostream>
 #include<string>
 
@@ -34,11 +34,17 @@ public:
         count = 1;
     }
 
-    // disabling copy constructor
+    //explicitly disable copy constructor
     LinkedList (const LinkedList&) = delete; 
 
-    // disabling copy assignment operator
+    //explicitly disable copy assignment operator
     LinkedList& operator = (const LinkedList&) = delete; 
+
+    //explicitly disable move constructor
+    LinkedList (LinkedList&&) = delete;
+
+    //explicitly disable move assignment operator
+    LinkedList& operator = (LinkedList&&) = delete; 
 
     // virtual destructor
     virtual ~LinkedList()
@@ -245,80 +251,7 @@ int main ()
     std::cout << "Items: " << myLinkedList.getValues() << std::endl;
 
 
-    std::cout << "///////////////////////////" << "\n";
-
-    LinkedList<double> myLinkedList2;
-
-    myLinkedList2.insertHead(12.34);
-    myLinkedList2.insertHead(22.34);
-    myLinkedList2.insertHead(5.2);
-    myLinkedList2.insertHead(11.34);
-    myLinkedList2.insertHead(89.306);
-
-    std::cout << "Items: " << myLinkedList2.getValues() << std::endl;
-
-    myLinkedList2.removeValue(11.34);
-
-    std::cout << "Items: " << myLinkedList2.getValues() << std::endl;
-    double variable3 = 89.306;
-    if(myLinkedList2.search(variable3) != nullptr) 
-    {
-        std::cout << "Item " << variable3 << " is in the linked list" << std::endl;
-    }
-    else
-    {
-        std::cout << "Item " << variable3 << " is NOT in the linked list" << std::endl;
-    }
-
-
-    double variable4 = 55.21;
-    if(myLinkedList2.search(variable4) != nullptr) 
-    {
-        std::cout << "Item " << variable4 << " is in the linked list" << std::endl;
-    }
-    else
-    {
-        std::cout << "Item " << variable4 << " is NOT in the linked list" << std::endl;
-    }
-
-
-    std::cout << "///////////////////////////" << "\n";
-
-    LinkedList<float> myLinkedList3;
-
-    myLinkedList3.insertHead(12.34);
-    myLinkedList3.insertHead(22.34);
-    myLinkedList3.insertHead(5.2);
-    myLinkedList3.insertHead(11.34);
-    myLinkedList3.insertHead(89.306);
-
-    std::cout << "Items: " << myLinkedList3.getValues() << std::endl;
-
-    myLinkedList3.removeValue(11.34);
-
-    std::cout << "Items: " << myLinkedList3.getValues() << std::endl;
-    float variable5 = 89.306;
-    if(myLinkedList3.search(variable5) != nullptr) 
-    {
-        std::cout << "Item " << variable5 << " is in the linked list" << std::endl;
-    }
-    else
-    {
-        std::cout << "Item " << variable5 << " is NOT in the linked list" << std::endl;
-    }
-
-
-    float variable6 = 55.21;
-    if(myLinkedList3.search(variable6) != nullptr) 
-    {
-        std::cout << "Item " << variable6 << " is in the linked list" << std::endl;
-    }
-    else
-    {
-        std::cout << "Item " << variable6 << " is NOT in the linked list" << std::endl;
-    }
-
-     
+    
     
     return 0;
 }
