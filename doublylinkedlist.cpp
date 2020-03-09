@@ -51,6 +51,18 @@ public:
         tail = nullptr;
     }
 
+    //explicitly disable copy constructor
+    DoublyLinkedList (const DoublyLinkedList&) = delete; 
+
+    //explicitly disable copy assignment operator
+    DoublyLinkedList& operator = (const DoublyLinkedList&) = delete; 
+
+    //explicitly disable move constructor
+    DoublyLinkedList (DoublyLinkedList&&) = delete;
+
+    //explicitly disable move assignment operator
+    DoublyLinkedList& operator = (DoublyLinkedList&&) = delete;     
+
     int getCount () const
     {
         return count;
