@@ -157,34 +157,6 @@ public:
         delete temp;
         count--;
     }
-
-    void removeValue (T val)
-    {
-        if (count == 0) return;
-
-        if (first->item == val)
-        {
-            removeHead();
-            return;
-        }
-        
-        Node* temp = first->next;
-        Node* temp2 = first;
-        while(temp)
-        {
-            if(temp->item == val)
-            {
-               temp2->next = temp->next;
-               delete temp;
-               count--;
-               return;
-            }
-            temp2 = temp2->next;
-            temp = temp->next;
-        }
-
-    }
-
 };
 
 int main ()
@@ -227,23 +199,12 @@ int main ()
 
 
     std::cout << "Items: " << myLinkedList.getValues() << std::endl;
-
-
-    myLinkedList.removeValue(10);
-
-    std::cout << "Items: " << myLinkedList.getValues() << std::endl;
     
 
     
     myLinkedList.insertTail(22222);
 
     std::cout << "Items: " << myLinkedList.getValues() << std::endl; 
-
-   
-   
-    myLinkedList.removeValue(1000);   
-
-    std::cout << "Items: " << myLinkedList.getValues() << std::endl;
     
     
     myLinkedList.removeHead();
@@ -251,7 +212,23 @@ int main ()
     std::cout << "Items: " << myLinkedList.getValues() << std::endl;
 
 
+    LinkedList<int> mll2(12333);
+
+    std::cout << mll2.getValues() << std::endl;
+
+    mll2.insertAfter(12333, 55555);
+
+    std::cout << mll2.getValues() << std::endl;
+
     
-    
+    mll2.insertAfter(55555, 2222222);
+
+    std::cout << mll2.getValues() << std::endl;
+
+    mll2.removeHead();
+
+    std::cout << mll2.getValues() << std::endl;
+
+
     return 0;
 }
