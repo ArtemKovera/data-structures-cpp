@@ -133,6 +133,73 @@ public:
     }
 
 
+    void removeValue (T val)
+    {
+        if (count == 0) return;
+
+        if (head->data == val)
+        {
+            removeHead();
+            return;
+        }
+
+        if (tail->data == val)
+        {
+            removeTail();
+            return;
+        }
+        
+        
+        Node* temp = head;
+        Node* temp2 = temp->next;
+        Node* temp3 = temp2->next;
+        while(temp3)
+        {
+            if(temp2->data == val)
+            {
+               delete temp2;
+               temp->next = temp3;
+               temp3->previous = temp;
+               count--;
+               return;
+            }
+            temp = temp->next;
+            temp2 = temp2->next;
+            temp3 = temp3->next;
+        }   
+    }
+
+//first argument of this method is the value after which, second argument has to be inserted
+    void insertAfter (T val1, T val2)
+    {
+        if (count == 0) return;
+
+        if (tail->data == val1)
+        {
+            insertTail(val2);
+            return;
+        }
+        
+        Node *temp = head;
+        Node *temp2 = temp->next;
+        
+        while(temp2)
+        {
+            if(temp->data == val1)
+            {
+                Node *ptr = new Node;
+                ptr->data = val2;
+                ptr->next = temp2;
+                ptr->previous = temp;
+                temp2->previous = ptr;
+                temp->next = ptr;
+            }
+            temp = temp->next;
+            temp2 = temp2->next;
+        }
+    }
+
+
 };
 
 
@@ -160,7 +227,42 @@ int main ()
 
     std::cout << "there are " << dll.getCount() << " items int the list" << std::endl;
 
+    //dll.removeValue(123);
+    std::cout << dll.traversingFromHead() << std::endl;
+    std::cout << "from tail: " << dll.traversingFromTail() << std::endl;
 
+    dll.insertAfter(24100, 34531);
+    std::cout << dll.traversingFromHead() << std::endl;
+    dll.insertTail(1000000);
+    std::cout << dll.traversingFromHead() << std::endl;
+
+    std::cout << "from tail: " << dll.traversingFromTail() << std::endl;
+    dll.insertAfter(123, 888);
+
+    std::cout << dll.traversingFromHead() << std::endl;
+
+    std::cout << "from tail: " << dll.traversingFromTail() << std::endl;
+
+    dll.removeValue(12);
+
+    std::cout << dll.traversingFromHead() << std::endl;
+
+    std::cout << "from tail: " << dll.traversingFromTail() << std::endl;
+
+    dll.insertAfter(888, 1000);
+    std::cout << dll.traversingFromHead() << std::endl;
+
+    std::cout << "from tail: " << dll.traversingFromTail() << std::endl;
+
+    DoublyLinkedList<int> dll2 (9999);
+
+    dll2.insertAfter(9999, 8888);
+
+    dll2.removeValue(77777);
+
+    std::cout << dll2.traversingFromHead() << std::endl;
+
+    std::cout << dll2.traversingFromTail() << std::endl;
     
     return 0;
 }
