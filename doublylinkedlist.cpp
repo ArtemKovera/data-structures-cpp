@@ -24,7 +24,7 @@ public:
 
     DoublyLinkedList (): count{0}, head{nullptr}, tail{nullptr} {}
 
-    DoublyLinkedList (T value)
+    explicit DoublyLinkedList (T value)
     {
         Node *ptr = new Node;
         ptr->data = value;

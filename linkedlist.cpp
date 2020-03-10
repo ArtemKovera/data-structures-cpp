@@ -24,7 +24,7 @@ public:
     LinkedList (): first{nullptr}, last{nullptr}, count{0} {}
    
 
-    LinkedList (T val)
+    explicit LinkedList (T val)
     {
         Node* ptr = new Node;
         ptr->item = val;
