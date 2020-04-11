@@ -25,12 +25,11 @@ public:
     void insert (const std::vector<int>&);
 
     //this methods copys all the elements of the tree into a vector
-    void copyElementsToArray (std::vector<int>&) const;
+    //this methods uses in-order travesal of the tree
+    void copyElementsToVector (std::vector<int>&) const;
 
     int getNodeCount () const;
 
-   
-    
 
 private:
     //structure for Node
@@ -50,6 +49,9 @@ private:
 
     //auxiliary recursive function for element finding
     bool findElement (Node*, int) const;
+
+    //auxiliary recursive function for tree traversal
+    void inOrderTravese (Node*, std::vector<int>&) const;
     
 };
 
@@ -135,8 +137,18 @@ int main ()
     else std::cout << "13 is NOT in mySecondTree" << std::endl;  
 
     //
-    std::cout << "node count of mySecondTree is " << mySecondTree.getNodeCount() << std::endl;        
-    
+    std::cout << "node count of mySecondTree is " << mySecondTree.getNodeCount() << std::endl; 
+  
+    std::vector<int> vec3;
+
+    mySecondTree.copyElementsToVector(vec3);
+
+    std::cout << "Elements of mySecondTree sorted: ";
+    for (auto el : vec3)
+       std::cout << el << " ";  
+    std::cout << std::endl;
+
+
     return 0;
 }
 
@@ -174,10 +186,7 @@ BinaryTree::BinaryTree (int value)
 
 BinaryTree::BinaryTree (const std::vector<int>& vec): BinaryTree(vec[0])
 {
-    for (int i = 1; i < vec.size(); i++)
-    {
-        insert(vec[i]);
-    }
+    for (int i = 1; i < vec.size(); i++) insert(vec[i]);  
 }
 
 void BinaryTree::insert (int value)
@@ -188,19 +197,14 @@ void BinaryTree::insert (int value)
 
 void BinaryTree::insert (const std::vector<int>& vec)
 {
-    for (auto el : vec)
-    {
-        nodeInsert(root, el);
-    }
+    for (auto el : vec) nodeInsert(root, el);
+
     return;
 }
 
 void BinaryTree::nodeInsert (Node* temp, int value)
 {
-    if (temp->data == value) 
-    {
-        return;
-    }
+    if (temp->data == value) return;
 
     if (temp->data < value)
     {
@@ -254,4 +258,23 @@ bool BinaryTree::findElement(Node* temp, int value) const
         if (temp == nullptr) return false;
         findElement(temp, value);        
     }
+}
+
+void BinaryTree::copyElementsToVector (std::vector<int>& vec) const
+{
+    inOrderTravese(root, vec);
+}
+
+void BinaryTree::inOrderTravese(BinaryTree::Node* node, std::vector<int>& vec) const
+{
+    if(node)
+    {
+        if(node->leftLink) inOrderTravese(node->leftLink, vec);
+        
+        vec.push_back(node->data);
+
+        if(node->rightLink) inOrderTravese(node->rightLink, vec);
+    }
+    else 
+        return;
 }
