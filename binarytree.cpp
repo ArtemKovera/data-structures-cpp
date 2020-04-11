@@ -61,7 +61,6 @@ int main ()
     myFirstTree.insert(2);
     myFirstTree.insert(40);
     
-    
     //
     if (myFirstTree.find(10))  std::cout << "10 is there " << std::endl;
     else std::cout << "10 is NOT there " << std::endl;
@@ -107,8 +106,36 @@ int main ()
     else std::cout << "8 is NOT there " << std::endl;
 
     //
-    std::cout << "node count is " << myFirstTree.getNodeCount() << std::endl;
+    std::cout << "node count of myFirstTree is " << myFirstTree.getNodeCount() << std::endl;
 
+    std::vector<int> vec2 {5, 3, -7, 32, 1, 0, 45, -4, 11};
+
+    BinaryTree mySecondTree(vec2);
+
+    //
+    if (mySecondTree.find(8)) std::cout << "8 is in mySecondTree" << std::endl;
+    else std::cout << "8 is NOT in mySecondTree" << std::endl;
+
+    //
+    if (mySecondTree.find(5)) std::cout << "5 is in mySecondTree" << std::endl;
+    else std::cout << "5 is NOT in mySecondTree" << std::endl;
+
+    //
+    if (mySecondTree.find(-7)) std::cout << "-7 is in mySecondTree" << std::endl;
+    else std::cout << "-7 is NOT in mySecondTree" << std::endl;  
+
+    mySecondTree.insert(14);
+
+    //
+    if (mySecondTree.find(14)) std::cout << "14 is in mySecondTree" << std::endl;
+    else std::cout << "14 is NOT in mySecondTree" << std::endl; 
+
+    //
+    if (mySecondTree.find(13)) std::cout << "13 is in mySecondTree" << std::endl;
+    else std::cout << "13 is NOT in mySecondTree" << std::endl;  
+
+    //
+    std::cout << "node count of mySecondTree is " << mySecondTree.getNodeCount() << std::endl;        
     
     return 0;
 }
@@ -143,6 +170,14 @@ BinaryTree::BinaryTree (int value)
     root = allocateMemoryUnit();
     root->data = value;
     nodeCount++;
+}
+
+BinaryTree::BinaryTree (const std::vector<int>& vec): BinaryTree(vec[0])
+{
+    for (int i = 1; i < vec.size(); i++)
+    {
+        insert(vec[i]);
+    }
 }
 
 void BinaryTree::insert (int value)
