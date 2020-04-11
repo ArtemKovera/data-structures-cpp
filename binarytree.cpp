@@ -25,7 +25,7 @@ public:
     void insert (const std::vector<int>&);
 
     //this methods copys all the elements of the tree into a vector
-    void copyElementsToArray (std::vector<int>&);
+    void copyElementsToArray (std::vector<int>&) const;
 
     int getNodeCount () const;
 
@@ -56,82 +56,57 @@ private:
 int main ()
 {
     BinaryTree myFirstTree (10);
-
     myFirstTree.insert(5);
-
     myFirstTree.insert(30);
-
     myFirstTree.insert(2);
-
     myFirstTree.insert(40);
     
     
     //
-    if (myFirstTree.find(10))
-    {
-        std::cout << "10 is there " << std::endl;
-    }
-    else
-    {
-        std::cout << "10 is NOT there " << std::endl;
-    }
-    
-    //
-    if (myFirstTree.find(5))
-    {
-        std::cout << "5 is there " << std::endl;
-    }
-    else
-    {
-        std::cout << "5 is NOT there " << std::endl;
-    }
-    
-    
-    //
-    if (myFirstTree.find(30))
-    {
-        std::cout << "30 is there " << std::endl;
-    }
-    else
-    {
-        std::cout << "30 is NOT there " << std::endl;
-    }
+    if (myFirstTree.find(10))  std::cout << "10 is there " << std::endl;
+    else std::cout << "10 is NOT there " << std::endl;
 
-    if (myFirstTree.find(2))
-    {
-        std::cout << "2 is there " << std::endl;
-    }
-    else
-    {
-        std::cout << "2 is NOT there " << std::endl;
-    }    
-  
+    //
+    if (myFirstTree.find(5)) std::cout << "5 is there " << std::endl;
+    else  std::cout << "5 is NOT there " << std::endl;
+
+    //
+    if (myFirstTree.find(30)) std::cout << "30 is there " << std::endl;
+    else std::cout << "30 is NOT there " << std::endl;
+
+    //
+    if (myFirstTree.find(2)) std::cout << "2 is there " << std::endl;
+    else std::cout << "2 is NOT there " << std::endl; 
+        
+    //
+    if (myFirstTree.find(0)) std::cout << "0 is there " << std::endl;
+    else std::cout << "0 is NOT there " << std::endl;    
     
     //
-    if (myFirstTree.find(0))
-    {
-        std::cout << "0 is there " << std::endl;
-    }
-    else
-    {
-        std::cout << "0 is NOT there " << std::endl;
-    }
-    
-
-    if (myFirstTree.find(40))
-    {
-        std::cout << "40 is there " << std::endl;
-    }
-    else
-    {
-        std::cout << "40 is NOT there " << std::endl;
-    }
-    
+    if (myFirstTree.find(40)) std::cout << "40 is there " << std::endl;
+    else std::cout << "40 is NOT there " << std::endl;
+ 
     myFirstTree.insert(30);
     myFirstTree.insert(40);
     myFirstTree.insert(10);
     myFirstTree.insert(5);
-    
+
+    std::vector<int> vec1 {1, 3, 22, 11, 4, 7, 18};
+    myFirstTree.insert(vec1);
+
+    //
+    if (myFirstTree.find(11)) std::cout << "11 is there " << std::endl;
+    else std::cout << "11 is NOT there " << std::endl;
+
+    //
+    if (myFirstTree.find(7)) std::cout << "7 is there " << std::endl;
+    else std::cout << "7 is NOT there " << std::endl;   
+       
+    //
+    if (myFirstTree.find(8)) std::cout << "8 is there " << std::endl;
+    else std::cout << "8 is NOT there " << std::endl;
+
+    //
     std::cout << "node count is " << myFirstTree.getNodeCount() << std::endl;
 
     
@@ -173,6 +148,15 @@ BinaryTree::BinaryTree (int value)
 void BinaryTree::insert (int value)
 {
     nodeInsert(root, value);
+    return;
+}
+
+void BinaryTree::insert (const std::vector<int>& vec)
+{
+    for (auto el : vec)
+    {
+        nodeInsert(root, el);
+    }
     return;
 }
 
