@@ -1,6 +1,7 @@
 //binary search tree data structure with C++
 #include<iostream>
 #include<vector>
+#include<utility>
 
 class BinaryTree
 {
@@ -18,6 +19,9 @@ public:
     BinaryTree(const BinaryTree&);
 
     virtual ~BinaryTree();
+
+    //exception-safe assignment operator
+    BinaryTree& operator=(const BinaryTree&);
     
     //method to find an element in a tree, returns true if the element is found
     bool find (int) const;
@@ -64,8 +68,10 @@ private:
     //helper recursive method for tree traversal
     void inOrderTravese (Node*, std::vector<int>&) const;
 
-    //helper recursive method for using in the destructor
+    //helper recursive method for freeing the memory
     void clean (Node*);
+
+    void copy_elements (BinaryTree&, BinaryTree&) noexcept;
     
 };
 
@@ -187,6 +193,26 @@ int main ()
        std::cout << el << " ";  
     std::cout << std::endl; 
 
+    std::vector<int> vec7 {100, 200, 99, 300};
+
+    BinaryTree myFourthTree (vec7);
+
+    myFourthTree = myThirdTree;
+
+    std::vector<int> vec8;
+    myFourthTree.elementstoVectorinInsertionOrder(vec8);
+    std::cout << "Elements of myFourthTree in the order they were inserted:  ";
+    for (auto el : vec8)
+       std::cout << el << " ";  
+    std::cout << std::endl; 
+
+    std::vector<int> vec9;
+    myFourthTree.copyElementsToVector(vec9);
+    std::cout << "Elements of myFourthTree sorted:                           ";
+    for (auto el : vec9)
+       std::cout << el << " ";  
+    std::cout << std::endl;        
+
     return 0;
 }
 
@@ -243,6 +269,17 @@ BinaryTree::BinaryTree (const BinaryTree& src)
 BinaryTree::~BinaryTree()
 {
     clean(root);
+}
+
+BinaryTree& BinaryTree::operator= (const BinaryTree& src)
+{
+    if (this == &src) return *this;
+
+    clean(this->root);
+    
+    BinaryTree temp (src);
+    copy_elements (*this, temp);
+    return *this;
 }
 
 void BinaryTree::insert (int value)
@@ -358,5 +395,19 @@ int BinaryTree::getRootElement () const
 void BinaryTree::elementstoVectorinInsertionOrder (std::vector<int>& vec) const
 {
     vec = treeElementsOrderofInsertion;
+    return;
+}
+
+void BinaryTree::copy_elements (BinaryTree& first, BinaryTree& second) noexcept
+{
+    first.root = allocateMemoryUnit();
+    //std::vector<int> emptyVec;
+    first.treeElementsOrderofInsertion.clear();
+    first.root->data = second.getRootElement();
+    first.treeElementsOrderofInsertion.push_back(first.root->data);
+    for (int i = 1; i<second.treeElementsOrderofInsertion.size(); i++)
+    {
+        first.insert(second.treeElementsOrderofInsertion[i]);
+    }
     return;
 }
