@@ -15,6 +15,8 @@ public:
     //data members of the nodes created are the values of the vector elements
     BinaryTree(const std::vector<int>&);
 
+    BinaryTree(const BinaryTree&);
+
     virtual ~BinaryTree();
     
     //method to find an element in a tree, returns true if the element is found
@@ -32,6 +34,10 @@ public:
 
     int getNodeCount () const;
 
+    int getRootElement () const;
+
+    void elementstoVectorinInsertionOrder (std::vector<int>&) const;
+
 
 private:
     //structure for Node
@@ -43,19 +49,21 @@ private:
     int hight = 0;
     int nodeCount = 0;
 
+    std::vector<int> treeElementsOrderofInsertion;
+
     //method for allocating a memory unit for one node, returns pointer to this memory unit
     Node* allocateMemoryUnit ();
 
-    //auxiliary recursive function for node insertion
+    //helper recursive method for node insertion
     void nodeInsert (Node*, int);
 
-    //auxiliary recursive function for element finding
+    //helper recursive method for element finding
     bool findElement (Node*, int) const;
 
-    //auxiliary recursive function for tree traversal
+    //helper recursive method for tree traversal
     void inOrderTravese (Node*, std::vector<int>&) const;
 
-    //halper recursive method for using in the destructor
+    //helper recursive method for using in the destructor
     void clean (Node*);
     
 };
@@ -153,6 +161,18 @@ int main ()
        std::cout << el << " ";  
     std::cout << std::endl;
 
+    BinaryTree myThirdTree(mySecondTree);
+
+    std::vector<int> vec4;
+    myThirdTree.copyElementsToVector(vec4);
+
+    std::cout << "Elements of myThirdTree sorted:  ";
+    for (auto el : vec4)
+       std::cout << el << " ";  
+    std::cout << std::endl; 
+    std::cout << "node count of myThirdTree is " << myThirdTree.getNodeCount() << std::endl; 
+      
+
 
     return 0;
 }
@@ -180,6 +200,7 @@ BinaryTree::BinaryTree ()
     root = allocateMemoryUnit();
     root->data = 0;
     nodeCount++;
+    treeElementsOrderofInsertion.push_back(0);
 }
 
 BinaryTree::BinaryTree (int value)
@@ -187,11 +208,22 @@ BinaryTree::BinaryTree (int value)
     root = allocateMemoryUnit();
     root->data = value;
     nodeCount++;
+    treeElementsOrderofInsertion.push_back(value);
 }
 
 BinaryTree::BinaryTree (const std::vector<int>& vec): BinaryTree(vec[0])
 {
     for (int i = 1; i < vec.size(); i++) insert(vec[i]);  
+}
+
+BinaryTree::BinaryTree (const BinaryTree& src)
+{
+    std::vector<int> vect;
+    src.elementstoVectorinInsertionOrder(vect);
+    root = allocateMemoryUnit();
+    root->data = src.getRootElement();
+    nodeCount++;
+    insert(vect);
 }
 
 BinaryTree::~BinaryTree()
@@ -225,6 +257,7 @@ void BinaryTree::nodeInsert (Node* temp, int value)
             temp2->data = value;
             temp->rightLink = temp2;
             nodeCount++;
+            treeElementsOrderofInsertion.push_back(value);
             return;
         }
         temp = temp2;
@@ -239,6 +272,7 @@ void BinaryTree::nodeInsert (Node* temp, int value)
             temp2->data = value;
             temp->leftLink = temp2;
             nodeCount++;
+            treeElementsOrderofInsertion.push_back(value);
             return;
         }
         temp = temp2;
@@ -300,4 +334,15 @@ void BinaryTree::clean(BinaryTree::Node* node)
         delete node;
         node = nullptr;      
     }
+}
+
+int BinaryTree::getRootElement () const
+{
+    return root->data;
+}
+
+void BinaryTree::elementstoVectorinInsertionOrder (std::vector<int>& vec) const
+{
+    vec = treeElementsOrderofInsertion;
+    return;
 }
