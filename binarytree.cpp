@@ -401,9 +401,8 @@ void BinaryTree::elementstoVectorinInsertionOrder (std::vector<int>& vec) const
 void BinaryTree::copy_elements (BinaryTree& first, BinaryTree& second) noexcept
 {
     first.root = allocateMemoryUnit();
-    //std::vector<int> emptyVec;
     first.treeElementsOrderofInsertion.clear();
-    first.root->data = second.getRootElement();
+    first.root->data = second.root->data;
     first.treeElementsOrderofInsertion.push_back(first.root->data);
     for (int i = 1; i<second.treeElementsOrderofInsertion.size(); i++)
     {
