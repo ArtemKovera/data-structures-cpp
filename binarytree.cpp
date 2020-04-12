@@ -72,9 +72,12 @@ private:
     void inOrderTravese (Node*, std::vector<int>&) const;
 
     //helper recursive method for freeing the memory
-    void clean (Node*);
+    void clean (Node*) noexcept;
 
     void copy_elements (BinaryTree&, BinaryTree&) noexcept;
+
+    //helper method used in move constructor and move assignment operator
+    void forMovingFrom (BinaryTree&) noexcept;
     
 };
 
@@ -231,6 +234,15 @@ int main ()
        std::cout << el << " ";  
     std::cout << std::endl; 
 
+    BinaryTree mySixthTree (1000);
+    mySixthTree = std::move(myFifthTree);
+
+    std::vector<int> vec12;
+    mySixthTree.elementstoVectorinInsertionOrder(vec12);
+    std::cout << "Elements of mySixthTree in the order they were inserted:   ";
+    for (auto el : vec12)
+       std::cout << el << " ";  
+    std::cout << std::endl;
 
     return 0;
 }
@@ -287,13 +299,7 @@ BinaryTree::BinaryTree (const BinaryTree& src)
 
 BinaryTree::BinaryTree(BinaryTree&& src) noexcept
 {
-    root = src.root;
-    nodeCount = src.nodeCount;
-    treeElementsOrderofInsertion = src.treeElementsOrderofInsertion;
-
-    src.root = nullptr;
-    src.treeElementsOrderofInsertion.clear();
-    src.nodeCount = 0;
+    forMovingFrom(src);
 }
 
 BinaryTree::~BinaryTree()
@@ -310,6 +316,17 @@ BinaryTree& BinaryTree::operator= (const BinaryTree& src)
     BinaryTree temp (src);
     copy_elements (*this, temp);
     return *this;
+}
+
+BinaryTree& BinaryTree::operator= (BinaryTree&& src) noexcept
+{
+    if (this == &src) return *this;
+
+    clean(root);
+
+    forMovingFrom(src);
+
+    return *this;    
 }
 
 void BinaryTree::insert (int value)
@@ -404,7 +421,7 @@ void BinaryTree::inOrderTravese(BinaryTree::Node* node, std::vector<int>& vec) c
         return;
 }
 
-void BinaryTree::clean(BinaryTree::Node* node)
+void BinaryTree::clean(BinaryTree::Node* node) noexcept
 {
     if(node)
     {
@@ -439,4 +456,15 @@ void BinaryTree::copy_elements (BinaryTree& first, BinaryTree& second) noexcept
         first.insert(second.treeElementsOrderofInsertion[i]);
     }
     return;
+}
+
+void BinaryTree::forMovingFrom (BinaryTree& src) noexcept
+{
+    root = src.root;
+    nodeCount = src.nodeCount;
+    treeElementsOrderofInsertion = src.treeElementsOrderofInsertion;
+
+    src.root = nullptr;
+    src.treeElementsOrderofInsertion.clear();
+    src.nodeCount = 0;    
 }
