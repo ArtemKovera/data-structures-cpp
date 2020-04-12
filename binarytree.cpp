@@ -15,6 +15,8 @@ public:
     //data members of the nodes created are the values of the vector elements
     BinaryTree(const std::vector<int>&);
 
+    virtual ~BinaryTree();
+    
     //method to find an element in a tree, returns true if the element is found
     bool find (int) const;
 
@@ -52,6 +54,9 @@ private:
 
     //auxiliary recursive function for tree traversal
     void inOrderTravese (Node*, std::vector<int>&) const;
+
+    //halper recursive method for using in the destructor
+    void clean (Node*);
     
 };
 
@@ -189,6 +194,11 @@ BinaryTree::BinaryTree (const std::vector<int>& vec): BinaryTree(vec[0])
     for (int i = 1; i < vec.size(); i++) insert(vec[i]);  
 }
 
+BinaryTree::~BinaryTree()
+{
+    clean(root);
+}
+
 void BinaryTree::insert (int value)
 {
     nodeInsert(root, value);
@@ -277,4 +287,17 @@ void BinaryTree::inOrderTravese(BinaryTree::Node* node, std::vector<int>& vec) c
     }
     else 
         return;
+}
+
+void BinaryTree::clean(BinaryTree::Node* node)
+{
+    if(node)
+    {
+        if(node->leftLink) clean(node->leftLink);
+        
+        if(node->rightLink) clean(node->rightLink);
+    
+        delete node;
+        node = nullptr;      
+    }
 }
