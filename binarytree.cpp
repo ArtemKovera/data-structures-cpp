@@ -28,14 +28,15 @@ public:
     //this version of insert method inserts an entire int vector element by element into the tree 
     void insert (const std::vector<int>&);
 
-    //this methods copys all the elements of the tree into a vector
+    //this methods copies all the elements of the tree into a vector
     //this methods uses in-order travesal of the tree
     void copyElementsToVector (std::vector<int>&) const;
 
     int getNodeCount () const;
 
     int getRootElement () const;
-
+     
+    //this method copies all the elements of the tree into a vector in the order they had been iserted
     void elementstoVectorinInsertionOrder (std::vector<int>&) const;
 
 
@@ -171,8 +172,20 @@ int main ()
        std::cout << el << " ";  
     std::cout << std::endl; 
     std::cout << "node count of myThirdTree is " << myThirdTree.getNodeCount() << std::endl; 
-      
+    
+    std::vector<int> vec5;
+    myThirdTree.elementstoVectorinInsertionOrder(vec5);
+    std::cout << "Elements of myThirdTree in the order they were  inserted:  ";
+    for (auto el : vec5)
+       std::cout << el << " ";  
+    std::cout << std::endl; 
 
+    std::vector<int> vec6;
+    mySecondTree.elementstoVectorinInsertionOrder(vec6);
+    std::cout << "Elements of mySecondTree in the order they were inserted:  ";
+    for (auto el : vec6)
+       std::cout << el << " ";  
+    std::cout << std::endl; 
 
     return 0;
 }
@@ -223,6 +236,7 @@ BinaryTree::BinaryTree (const BinaryTree& src)
     root = allocateMemoryUnit();
     root->data = src.getRootElement();
     nodeCount++;
+    treeElementsOrderofInsertion.push_back(root->data);
     insert(vect);
 }
 
