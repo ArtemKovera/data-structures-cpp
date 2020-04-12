@@ -18,10 +18,14 @@ public:
 
     BinaryTree(const BinaryTree&);
 
-    virtual ~BinaryTree();
+    BinaryTree(BinaryTree&&) noexcept;
 
     //exception-safe assignment operator
     BinaryTree& operator=(const BinaryTree&);
+
+    BinaryTree& operator=(BinaryTree&&) noexcept;
+
+    virtual ~BinaryTree();
     
     //method to find an element in a tree, returns true if the element is found
     bool find (int) const;
@@ -51,7 +55,6 @@ private:
     //pointer pointed to the root node
     Node* root = nullptr;
 
-    int hight = 0;
     int nodeCount = 0;
 
     std::vector<int> treeElementsOrderofInsertion;
@@ -211,7 +214,23 @@ int main ()
     std::cout << "Elements of myFourthTree sorted:                           ";
     for (auto el : vec9)
        std::cout << el << " ";  
-    std::cout << std::endl;        
+    std::cout << std::endl; 
+
+    BinaryTree myFifthTree (std::move(myFourthTree));
+    std::vector<int> vec10;
+    myFifthTree.copyElementsToVector(vec10);
+    std::cout << "Elements of myFifthTree  sorted:                           ";
+    for (auto el : vec10)
+       std::cout << el << " ";  
+    std::cout << std::endl;     
+
+    std::vector<int> vec11;
+    myFifthTree.elementstoVectorinInsertionOrder(vec11);
+    std::cout << "Elements of myFifthTree in the order they were inserted:   ";
+    for (auto el : vec11)
+       std::cout << el << " ";  
+    std::cout << std::endl; 
+
 
     return 0;
 }
@@ -264,6 +283,17 @@ BinaryTree::BinaryTree (const BinaryTree& src)
     nodeCount++;
     treeElementsOrderofInsertion.push_back(root->data);
     insert(vect);
+}
+
+BinaryTree::BinaryTree(BinaryTree&& src) noexcept
+{
+    root = src.root;
+    nodeCount = src.nodeCount;
+    treeElementsOrderofInsertion = src.treeElementsOrderofInsertion;
+
+    src.root = nullptr;
+    src.treeElementsOrderofInsertion.clear();
+    src.nodeCount = 0;
 }
 
 BinaryTree::~BinaryTree()
