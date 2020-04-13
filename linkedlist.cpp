@@ -1,38 +1,30 @@
-// implementation of simple singly linked list in C++ (templated version)
+// implementation of simple singly linked list in C++
 #include<iostream>
 #include<string>
 
 
-template<typename T>
 class LinkedList
 {
 private:
-    struct Node
-    {
-        T item;
-        Node* next;
-    };
+    //basis structure for a node
+    struct Node;
 
+    //node count
     int count;
+
+    //pointer pointing to first node
     Node* first;
+
+    //pointer pointing to last node
     Node* last;
 
 
 public:
-
-    // default constructor
-    LinkedList (): first{nullptr}, last{nullptr}, count{0} {}
+    //defalt constructor creates a list with no nodes
+    LinkedList ();
    
-
-    explicit LinkedList (T val)
-    {
-        Node* ptr = new Node;
-        ptr->item = val;
-        ptr->next = nullptr;
-        first = ptr;
-        last = ptr;
-        count = 1;
-    }
+    //this constructor creates list with one node, which data value equals to the argumet
+    explicit LinkedList (int);
 
     //explicitly disable copy constructor
     LinkedList (const LinkedList&) = delete; 
@@ -46,122 +38,37 @@ public:
     //explicitly disable move assignment operator
     LinkedList& operator = (LinkedList&&) = delete; 
 
-    // virtual destructor
-    virtual ~LinkedList()
-    {
-        
-        Node* current = nullptr;
-        Node* temp = first;
-        
-        while (temp)
-        {
-            current = temp;
-            temp = temp->next;
-            delete current;
-        }
-        
-    }
+    virtual ~LinkedList();
 
+    int getFirstItem () const;
 
-    T getFirstItem () const
-    {
-        return first->item;
-    }
+    int getLastItem  () const;
 
-    T getLastItem  () const
-    {
-        return last->item;
-    }
+    void insertHead (int val);
 
-    void insertHead (T val)
-    {
-        Node* ptr = new Node;
-        ptr->next = first;
-        first = ptr;
-        ptr->item = val;
-        count++;
-    }
+    void insertTail (int val);
 
-    void insertTail (T val)
-    {
-        Node* ptr = new Node;
-        ptr->next = nullptr;
-        last->next = ptr;
-        last = ptr;
-        count++;
-        ptr->item = val;
-    }
+    int itemsCount () const;
 
-    int itemsCount () const
-    {
-        return count;
-    }
+    //this method returns a string of node data values
+    std::string getValues () const;
 
+    //this method searchers for a particular value in the list
+    //returns true if the value is found and false if not
+    bool search (int val) const;
 
-    std::string getValues () const
-    {
-        Node* temp = first;
-        std::string str = "";
-        while(temp)
-        {
-            str += std::to_string(temp->item) + " ";
-            temp = temp->next;
-        }
-        return str;
-    }
+    //this method inserts a node with data value equaled to the second argument
+    //after a node with data value equled to the first argumet
+    //if no node with data value equled to the first argumet is found, there is no insertion
+    void insertAfter (int val1, int val2);
 
-    Node* search (T val) const
-    {
-        if (count == 0) return nullptr;
-        
-        Node* temp = first;
+    void removeHead ();
 
-        while(temp)
-        {
-            if(temp->item==val) return temp;
-
-            temp = temp->next;
-        }
-
-        return nullptr;
-    }
-
-
-    void insertAfter (T val1, T val2)
-    {
-        if (count == 0) return;
-
-        Node* temp = first;
-        
-        while(temp)
-        {
-            if(temp->item==val1)
-            {
-                Node* ptr = new Node;
-                ptr->item = val2;
-                ptr->next = temp->next;
-                temp->next = ptr;
-                count++;
-            }
-
-            temp = temp->next;
-        }
-    }
-
-    void removeHead ()
-    {
-        if (count == 0) return;
-
-        Node* temp = first;
-        first = temp->next;
-        delete temp;
-        count--;
-    }
 };
 
 int main ()
 {
-    LinkedList<int> myLinkedList(5);
+    LinkedList myLinkedList(5);
     myLinkedList.insertHead(10);
     myLinkedList.insertTail(200);
     myLinkedList.insertTail(247);
@@ -174,7 +81,7 @@ int main ()
     std::cout << "Items: " << myLinkedList.getValues() << std::endl;
 
     int variable = 25;
-    if(myLinkedList.search(variable) != nullptr) 
+    if(myLinkedList.search(variable)) 
     {
         std::cout << "Item " << variable << " is in the linked list" << std::endl;
     }
@@ -184,7 +91,7 @@ int main ()
     }
 
     int variable2 = 247;
-    if(myLinkedList.search(variable2) != nullptr) 
+    if(myLinkedList.search(variable2)) 
     {
         std::cout << "Item " << variable2 << " is in the linked list" << std::endl;
     }
@@ -212,7 +119,7 @@ int main ()
     std::cout << "Items: " << myLinkedList.getValues() << std::endl;
 
 
-    LinkedList<int> mll2(12333);
+    LinkedList mll2(12333);
 
     std::cout << mll2.getValues() << std::endl;
 
@@ -229,6 +136,132 @@ int main ()
 
     std::cout << mll2.getValues() << std::endl;
 
-
     return 0;
 }
+
+struct LinkedList::Node
+{
+    int item;
+    Node* next;
+};
+
+LinkedList::LinkedList (): first{nullptr}, last{nullptr}, count{0} {}
+
+
+LinkedList::LinkedList (int val)
+{
+    Node* ptr = new Node;
+    ptr->item = val;
+    ptr->next = nullptr;
+    first = ptr;
+    last = ptr;
+    count = 1;
+}
+
+LinkedList::~LinkedList()
+{    
+    Node* current = nullptr;
+    Node* temp = first;
+        
+    while (temp)
+    {
+        current = temp;
+        temp = temp->next;
+        delete current;
+    }
+        
+}
+
+int LinkedList::getFirstItem () const
+{
+    return first->item;
+}
+
+int LinkedList::getLastItem  () const
+{
+    return last->item;
+}
+
+void LinkedList::insertHead (int val)
+{
+    Node* ptr = new Node;
+    ptr->next = first;
+    first = ptr;
+    ptr->item = val;
+    count++;
+}
+
+void LinkedList::insertTail (int val)
+{
+    Node* ptr = new Node;
+    ptr->next = nullptr;
+    last->next = ptr;
+    last = ptr;
+    count++;
+    ptr->item = val;
+}
+
+int LinkedList::itemsCount () const
+{
+    return count;
+}
+
+
+std::string LinkedList::getValues () const
+{
+    Node* temp = first;
+    std::string str = "";
+    while(temp)
+    {
+        str += std::to_string(temp->item) + " ";
+        temp = temp->next;
+    }
+    return str;
+}
+
+bool LinkedList::search (int val) const
+{
+    if (count == 0) return false;
+        
+    Node* temp = first;
+
+    while(temp)
+    {
+        if(temp->item==val) return true;
+
+        temp = temp->next;
+    }
+    return false;
+}
+
+void LinkedList::insertAfter (int val1, int val2)
+{
+    if (count == 0) return;
+
+    Node* temp = first;
+        
+    while(temp)
+    {
+        if(temp->item==val1)
+        {
+            Node* ptr = new Node;
+            ptr->item = val2;
+            ptr->next = temp->next;
+            temp->next = ptr;
+            count++;
+        }
+
+        temp = temp->next;
+    }
+}
+
+void LinkedList::removeHead ()
+{
+    if (count == 0) return;
+
+    Node* temp = first;
+    first = temp->next;
+    delete temp;
+    count--;
+}
+
