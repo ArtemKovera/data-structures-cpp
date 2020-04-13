@@ -289,6 +289,7 @@ BinaryTree::BinaryTree (const std::vector<int>& vec): BinaryTree(vec[0])
 BinaryTree::BinaryTree (const BinaryTree& src)
 {
     std::vector<int> vect;
+    vect.reserve(src.nodeCount);
     src.elementstoVectorinInsertionOrder(vect);
     root = allocateMemoryUnit();
     root->data = src.getRootElement();
