@@ -1,4 +1,7 @@
 // implementation of simple singly linked list in C++
+
+//THERE IS A NEWER version of singly linked list in this repo
+
 #include<iostream>
 #include<string>
 
@@ -264,4 +267,3 @@ void LinkedList::removeHead ()
     delete temp;
     count--;
 }
-
