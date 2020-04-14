@@ -11,6 +11,9 @@ public:
     //this constructor creates a list with one node whose data item equals the argument of the constructor
     explicit LinkedList (int);
 
+    //this constructor creats a list whose nodes contain data items from the vector passed as a parameter
+    explicit LinkedList(const std::vector<int>);
+
     virtual ~LinkedList();
 
     void insertHead (int);
@@ -180,6 +183,16 @@ int main ()
     else
         std::cout << "200 is NOT in the list" << std::endl;    
 
+    std::cout << "-----------------" << std::endl;
+    std::vector<int>vec10 {12, 33, 422, 22, 112, 2332};
+    LinkedList list2(vec10);
+    std::vector<int>vec11;
+    list2.getListDataItems(vec11);
+   
+    std::cout << "list2 has " << list2.getNodeCount() << " nodes with data items: ";
+    for(auto el: vec11)
+        std::cout << el << " ";
+    std::cout << "\n";
 
     return 0;    
 }
@@ -210,6 +223,23 @@ LinkedList::LinkedList (int val)
     Node* ptr = allocateMemoryUnit(val);
     head = ptr;
     tail = ptr;
+}
+
+LinkedList::LinkedList (const std::vector<int> vec)
+{
+    if (vec.empty()) 
+    {
+        Node* ptr = allocateMemoryUnit(0);
+        head = ptr;
+        tail = ptr;        
+    }
+
+    Node* ptr = allocateMemoryUnit(vec[0]);
+    head = ptr;
+    tail = ptr; 
+    
+    for (int i = 1; i<vec.size(); i++) 
+        insertTail(vec[i]);
 }
 
 LinkedList::~LinkedList()
