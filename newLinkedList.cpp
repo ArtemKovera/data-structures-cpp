@@ -1,4 +1,4 @@
-//newer version of singly linked list with C++ in this repo
+//NEWER version of singly linked list with C++ in this repo
 #include<iostream>
 #include<vector>
 #include<utility>
@@ -17,8 +17,12 @@ public:
 
     LinkedList (const LinkedList&);
 
+    LinkedList (LinkedList&&) noexcept;
+
     //exception-safe assignment operator
     LinkedList& operator= (const LinkedList&);
+
+    LinkedList& operator= (LinkedList&&) noexcept;
 
     virtual ~LinkedList();
 
@@ -77,7 +81,10 @@ private:
     int getData (Node*) const;
 
     //helper method for swaping lists
-    void swap (LinkedList&, LinkedList&) noexcept;    
+    void swap (LinkedList&, LinkedList&) noexcept; 
+
+    //helper method used in move constructor and assignment operator
+    void moveFrom (LinkedList&) noexcept;   
 };
 
 int main ()
@@ -174,7 +181,6 @@ int main ()
         std::cout << el << " ";
     std::cout << "\n";     
     
-
     std::cout << "-----------------" << std::endl;
     list1.insertAfter(55, 111);
     std::vector<int> vec9;
@@ -223,6 +229,24 @@ int main ()
     for(auto el: vec13)
         std::cout << el << " ";
     std::cout << "\n";          
+
+    std::cout << "-----------------" << std::endl;
+    LinkedList list4 (std::move(list2));
+    std::vector<int>vec14;
+    list4.getListDataItems(vec14);
+    std::cout << "list4 has " << list4.getNodeCount() << " nodes with data items: ";
+    for(auto el: vec14)
+        std::cout << el << " ";
+    std::cout << "\n"; 
+
+    std::cout << "-----------------" << std::endl;
+    list4 = std::move(list3);
+    std::vector<int>vec15;
+    list4.getListDataItems(vec15);
+    std::cout << "Now list4 has " << list4.getNodeCount() << " nodes with data items: ";
+    for(auto el: vec15)
+        std::cout << el << " ";
+    std::cout << "\n";  
 
     return 0;    
 }
@@ -288,12 +312,28 @@ LinkedList::LinkedList (const LinkedList& src)
     }
 }
 
+LinkedList::LinkedList (LinkedList&& src) noexcept
+{
+    moveFrom(src);
+}
+
 LinkedList& LinkedList::operator= (const LinkedList& src)
 {
     if (this == &src) return *this;
     
     LinkedList temp(src);
     swap(*this, temp);
+    return *this;
+}
+
+LinkedList& LinkedList::operator= (LinkedList&& src) noexcept
+{
+    if (this == &src) return *this;
+
+    clean(head);
+    
+    moveFrom(src);
+
     return *this;
 }
 
@@ -458,5 +498,16 @@ void LinkedList::swap (LinkedList& first, LinkedList& second) noexcept
     swap (first.head, second.head);
     swap (first.tail, second.tail);
     swap (first.nodeCount, second.nodeCount);
+}
+
+void LinkedList::moveFrom (LinkedList& src) noexcept
+{
+    head = src.head;
+    tail = src.tail;
+    nodeCount = src.nodeCount;
+
+    src.head = nullptr;
+    src.tail = nullptr;
+    src.nodeCount = 0;
 }
 
