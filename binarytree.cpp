@@ -74,10 +74,11 @@ private:
     //helper recursive method for freeing the memory
     void clean (Node*) noexcept;
 
-    void copy_elements (BinaryTree&, BinaryTree&) noexcept;
-
     //helper method used in move constructor and move assignment operator
     void forMovingFrom (BinaryTree&) noexcept;
+
+    //helper method for swapping two trees
+    void swap (BinaryTree&, BinaryTree&) noexcept;
     
 };
 
@@ -326,10 +327,8 @@ BinaryTree& BinaryTree::operator= (const BinaryTree& src)
 {
     if (this == &src) return *this;
 
-    clean(this->root);
-    
     BinaryTree temp (src);
-    copy_elements (*this, temp);
+    swap (*this, temp);
     return *this;
 }
 
@@ -460,19 +459,6 @@ void BinaryTree::elementstoVectorinInsertionOrder (std::vector<int>& vec) const
     return;
 }
 
-void BinaryTree::copy_elements (BinaryTree& first, BinaryTree& second) noexcept
-{
-    first.root = allocateMemoryUnit();
-    first.treeElementsOrderofInsertion.clear();
-    first.root->data = second.root->data;
-    first.treeElementsOrderofInsertion.push_back(first.root->data);
-    for (int i = 1; i<second.treeElementsOrderofInsertion.size(); i++)
-    {
-        first.insert(second.treeElementsOrderofInsertion[i]);
-    }
-    return;
-}
-
 void BinaryTree::forMovingFrom (BinaryTree& src) noexcept
 {
     root = src.root;
@@ -482,4 +468,13 @@ void BinaryTree::forMovingFrom (BinaryTree& src) noexcept
     src.root = nullptr;
     src.treeElementsOrderofInsertion.clear();
     src.nodeCount = 0;    
+}
+
+void BinaryTree::swap (BinaryTree& first, BinaryTree& second) noexcept
+{
+    using std::swap;
+
+    swap(first.nodeCount, second.nodeCount);
+    swap(first.root, second.root);
+    swap(first.treeElementsOrderofInsertion, second.treeElementsOrderofInsertion);
 }
