@@ -463,7 +463,7 @@ void BinaryTree::forMovingFrom (BinaryTree& src) noexcept
 {
     root = src.root;
     nodeCount = src.nodeCount;
-    treeElementsOrderofInsertion = src.treeElementsOrderofInsertion;
+    treeElementsOrderofInsertion = std::move(src.treeElementsOrderofInsertion);
 
     src.root = nullptr;
     src.treeElementsOrderofInsertion.clear();
