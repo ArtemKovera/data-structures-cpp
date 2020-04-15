@@ -12,7 +12,9 @@ public:
     explicit LinkedList (int);
 
     //this constructor creats a list whose nodes contain data items from the vector passed as a parameter
-    explicit LinkedList(const std::vector<int>);
+    explicit LinkedList (const std::vector<int>);
+
+    LinkedList (const LinkedList&);
 
     virtual ~LinkedList();
 
@@ -65,6 +67,10 @@ private:
 
     //helper method for freeing up the memory
     void clean (Node*);
+    
+    //helper method which returns a data item of a node
+    //this method takes a node pointer as its parameter
+    int getData (Node*) const;
 };
 
 int main ()
@@ -188,11 +194,19 @@ int main ()
     LinkedList list2(vec10);
     std::vector<int>vec11;
     list2.getListDataItems(vec11);
-   
     std::cout << "list2 has " << list2.getNodeCount() << " nodes with data items: ";
     for(auto el: vec11)
         std::cout << el << " ";
     std::cout << "\n";
+
+    std::cout << "-----------------" << std::endl;
+    LinkedList list3(list2);
+    std::vector<int>vec12;
+    list3.getListDataItems(vec12);
+    std::cout << "list3 has " << list3.getNodeCount() << " nodes with data items: ";
+    for(auto el: vec12)
+        std::cout << el << " ";
+    std::cout << "\n";    
 
     return 0;    
 }
@@ -240,6 +254,22 @@ LinkedList::LinkedList (const std::vector<int> vec)
     
     for (int i = 1; i<vec.size(); i++) 
         insertTail(vec[i]);
+}
+
+LinkedList::LinkedList (const LinkedList& src)
+{
+    Node* temp = src.head;
+
+    Node* ptr = allocateMemoryUnit(temp->data);
+    head = ptr;
+    tail = ptr;
+    
+    temp = temp->next;
+    while (temp)
+    {
+        insertTail(src.getData(temp));
+        temp = temp->next;
+    }
 }
 
 LinkedList::~LinkedList()
@@ -389,5 +419,10 @@ bool LinkedList::search (int val) const
     }
 
     return false;
+}
+
+int LinkedList::getData (LinkedList::Node* ptr) const
+{
+    return ptr->data;
 }
 
