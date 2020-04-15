@@ -1,6 +1,7 @@
 //newer version of singly linked list with C++ in this repo
 #include<iostream>
 #include<vector>
+#include<utility>
 
 class LinkedList
 {
@@ -15,6 +16,9 @@ public:
     explicit LinkedList (const std::vector<int>);
 
     LinkedList (const LinkedList&);
+
+    //exception-safe assignment operator
+    LinkedList& operator= (const LinkedList&);
 
     virtual ~LinkedList();
 
@@ -71,6 +75,9 @@ private:
     //helper method which returns a data item of a node
     //this method takes a node pointer as its parameter
     int getData (Node*) const;
+
+    //helper method for swaping lists
+    void swap (LinkedList&, LinkedList&) noexcept;    
 };
 
 int main ()
@@ -206,7 +213,16 @@ int main ()
     std::cout << "list3 has " << list3.getNodeCount() << " nodes with data items: ";
     for(auto el: vec12)
         std::cout << el << " ";
-    std::cout << "\n";    
+    std::cout << "\n";
+
+    std::cout << "-----------------" << std::endl;
+    list3 = list1;
+    std::vector<int>vec13;
+    list3.getListDataItems(vec13);
+    std::cout << "Now list3 has " << list3.getNodeCount() << " nodes with data items: ";
+    for(auto el: vec13)
+        std::cout << el << " ";
+    std::cout << "\n";          
 
     return 0;    
 }
@@ -270,6 +286,15 @@ LinkedList::LinkedList (const LinkedList& src)
         insertTail(src.getData(temp));
         temp = temp->next;
     }
+}
+
+LinkedList& LinkedList::operator= (const LinkedList& src)
+{
+    if (this == &src) return *this;
+    
+    LinkedList temp(src);
+    swap(*this, temp);
+    return *this;
 }
 
 LinkedList::~LinkedList()
@@ -424,5 +449,14 @@ bool LinkedList::search (int val) const
 int LinkedList::getData (LinkedList::Node* ptr) const
 {
     return ptr->data;
+}
+
+void LinkedList::swap (LinkedList& first, LinkedList& second) noexcept
+{
+    using std::swap;
+
+    swap (first.head, second.head);
+    swap (first.tail, second.tail);
+    swap (first.nodeCount, second.nodeCount);
 }
 
