@@ -281,8 +281,22 @@ BinaryTree::BinaryTree (int value)
     treeElementsOrderofInsertion.push_back(value);
 }
 
-BinaryTree::BinaryTree (const std::vector<int>& vec): BinaryTree(vec[0])
+BinaryTree::BinaryTree (const std::vector<int>& vec)
 {
+    if (vec.empty())
+    {
+        root = allocateMemoryUnit();
+        root->data = 0;
+        nodeCount++;
+        treeElementsOrderofInsertion.push_back(0);
+        return;        
+    }
+
+    root = allocateMemoryUnit();
+    root->data = vec[0];
+    nodeCount++;
+    treeElementsOrderofInsertion.push_back(vec[0]); 
+
     for (int i = 1; i < vec.size(); i++) insert(vec[i]);  
 }
 
