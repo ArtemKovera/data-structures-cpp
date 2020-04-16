@@ -1,280 +1,391 @@
-//doubly linked list in C++
+//Doubly Linked List with C++
 
 #include<iostream>
+#include<vector>
 #include<string>
+#include<utility>
+#include<initializer_list>
 
-template<typename T>
-class DoublyLinkedList
+class Dlist
 {
-private:
-
-    struct Node
-    {
-        Node *next;
-        Node *previous;
-        T data;
-    };
-
-    int count;
-    Node *head;
-    Node *tail;
-    bool ifSorted = false;
-
 public:
+    //default constructor creates a list with one node whose data item equals 0
+    Dlist ();
 
-    DoublyLinkedList (): count{0}, head{nullptr}, tail{nullptr} {}
+    //this constructor creates a list with one node whose data item equals the argument of the constructor
+    explicit Dlist (int);
 
-    explicit DoublyLinkedList (T value)
-    {
-        Node *ptr = new Node;
-        ptr->data = value;
-        ptr->next = nullptr;
-        ptr->previous = nullptr;
-        head = ptr;
-        tail = ptr;
-        count = 1; 
-    }
+    //this constructor creats a list whose nodes contain data items from the initializer_list
+    Dlist(std::initializer_list<int>);
 
-    virtual ~DoublyLinkedList()
-    {
-        Node* current = nullptr;
-        Node* temp = head;
-        
-        while (temp)
-        {
-            current = temp;
-            temp = temp->next;
-            delete current;
-        }
+    //this constructor creats a list whose nodes contain data items from the vector passed as a parameter
+    explicit Dlist (const std::vector<int>); 
 
-        head = nullptr;
-        tail = nullptr;
-    }
+    Dlist (const Dlist&) = delete; 
 
-    //explicitly disable copy constructor
-    DoublyLinkedList (const DoublyLinkedList&) = delete; 
+    Dlist& operator = (const Dlist&) = delete; 
 
-    //explicitly disable copy assignment operator
-    DoublyLinkedList& operator = (const DoublyLinkedList&) = delete; 
+    Dlist (Dlist&&) = delete;
 
-    //explicitly disable move constructor
-    DoublyLinkedList (DoublyLinkedList&&) = delete;
+    Dlist& operator = (Dlist&&) = delete;
 
-    //explicitly disable move assignment operator
-    DoublyLinkedList& operator = (DoublyLinkedList&&) = delete;     
+    virtual ~Dlist();
 
-    int getCount () const
-    {
-        return count;
-    }
+    void insertHead (int);
 
-    T getFirstItem () const
-    {
-        return head->data;
-    }
+    void insertTail (int);
 
-    T getLastItem  () const
-    {
-        return tail->data;
-    }
+    //this method pushes all list's data items to a vector which is passed as an argument to this method
+    void dataItemstoVector (std::vector<int>&) const;
 
-    std::string traversingFromHead () const
-    {
-        Node* temp = head;
-        std::string str = "";
-        while(temp)
-        {
-            str += std::to_string(temp->data) + " ";
-            temp = temp->next;
-        }
-        return str;
-    }
+    int getNodeCount () const;
 
-    std::string traversingFromTail () const
-    {
-        Node* temp = tail;
-        std::string str = "";
-        while(temp)
-        {
-            str += std::to_string(temp->data) + " ";
-            temp = temp->previous;
-        }
-        return str;
-    }    
+    int getHeadDataItem () const;
+
+    int getTailDataItem () const;
+   
+    //this method returns a string which holds list data items from the head to the tail
+    std::string printFromHead () const;
     
-    void insertHead (T val)
-    {
-        Node* ptr = new Node;
-        head->previous = ptr;
-        ptr->next = head;
-        ptr->previous = nullptr;
-        head = ptr;
-        ptr->data = val;
-        count++;
-    }
+    //this method returns a string which holds list data items from the tail to the head 
+    std::string printFromTail () const;
 
-    void insertTail (T val)
-    {
-        Node* ptr = new Node;
-        tail->next = ptr;
-        ptr->next = nullptr;
-        ptr->previous = tail;
-        ptr->data = val;
-        tail = ptr;
-        count++;
-    }
+    //this method removes first node; if list has just one node, the method does nothing    
+    void removeHead ();
 
-    void removeHead ()
-    {
-        if (count == 0) return;
-        Node *temp = head;
-        head = head->next;
-        head->previous = nullptr;
-        delete temp;
-        count--;
-    }
+    //this method removes tail node; if list has just one node, the method does nothing
+    void removeTail ();
 
-    void removeTail ()
-    {
-        if (count == 0) return;
-        Node *temp = tail;
-        tail = tail->previous;
-        tail->next = nullptr;
-        delete temp;
-        count--;
-    }
+    //this method removes first occurens of a node whose data item equals the argument of the method
+    //if there are no such nodes, the method does nothing 
+    //if there is just one node in the list and its value equals the argument of the method, the method sets the value of that node to zero 
+    void removeDataItem (int);
 
+    //this method inserts a node with data value equaled to the second argument
+    //after a first node with data value equled to the first argument
+    //if no node with data value equled to the first argumet is found, there is no insertion
+    void insertAfter (int, int);
 
-    void removeValue (T val)
-    {
-        if (count == 0) return;
+    //this method inserts a node with data value equaled to the second argument
+    //before a first node with data value equled to the first argument
+    //if no node with data value equled to the first argumet is found, there is no insertion
+    void insertBefore (int, int);
 
-        if (head->data == val)
-        {
-            removeHead();
-            return;
-        }
+    //this method searchers for a value in the list
+    //returns true if the value is found and false if not    
+    bool search (int) const;
 
-        if (tail->data == val)
-        {
-            removeTail();
-            return;
-        }
-        
-        
-        Node* temp = head;
-        Node* temp2 = temp->next;
-        Node* temp3 = temp2->next;
-        while(temp3)
-        {
-            if(temp2->data == val)
-            {
-               delete temp2;
-               temp->next = temp3;
-               temp3->previous = temp;
-               count--;
-               return;
-            }
-            temp = temp->next;
-            temp2 = temp2->next;
-            temp3 = temp3->next;
-        }   
-    }
+private:
+    //structure for a node
+    struct Node;
 
-//first argument of this method is the value after which, second argument has to be inserted
-    void insertAfter (T val1, T val2)
-    {
-        if (count == 0) return;
-
-        if (tail->data == val1)
-        {
-            insertTail(val2);
-            return;
-        }
-        
-        Node *temp = head;
-        Node *temp2 = temp->next;
-        
-        while(temp2)
-        {
-            if(temp->data == val1)
-            {
-                Node *ptr = new Node;
-                ptr->data = val2;
-                ptr->next = temp2;
-                ptr->previous = temp;
-                temp2->previous = ptr;
-                temp->next = ptr;
-            }
-            temp = temp->next;
-            temp2 = temp2->next;
-        }
-    }
-
-
+    int nodeCount {0};
+    Node* head {nullptr};
+    Node* tail {nullptr};
+    
+    //this helper methods allocates memory for a single node and sets node's data item
+    //returns pointer pointing to this node
+    Node* buildNode(int);
+    
+    //helper method for freeing up the memory
+    void clean (Node*);
 };
-
 
 int main ()
 {
-    DoublyLinkedList<int> dll(12);
+    Dlist list1 ({0, 1, 2, 3, 4, 5});
+    std::cout << "list1 from the head: " << list1.printFromHead() << "\n";
+    std::cout << "list1 from the tail: " << list1.printFromTail() << "\n";
+    std::cout << "list1 has " << list1.getNodeCount() << " nodes" << "\n";
 
-    dll.insertHead(123);
-    dll.insertHead(100);
-    dll.insertHead(900);
-    dll.insertHead(233);
-    dll.insertTail(24100);
-    dll.insertTail(34400);
+    std::cout << std::endl;
+    std::vector<int> vec1 {11, 12, 13, 14, 15, 16};
+    Dlist list2 (vec1);
+    list2.insertHead(10);
+    list2.insertTail(17);
+    std::cout << "list2 from the head: " << list2.printFromHead() << "\n";
+    std::cout << "first data element of list2 is " << list2.getHeadDataItem() << "\n";
+    std::cout << "last data element of list2 is " << list2.getTailDataItem() << "\n";
 
-    std::cout << dll.traversingFromHead() << std::endl;
-    std::cout << dll.traversingFromTail() << std::endl;
-    std::cout << dll.traversingFromHead() << std::endl;
-
-
-    dll.removeTail();
-    dll.removeHead();
-
-    std::cout << dll.traversingFromHead() << std::endl;
-
-
-    std::cout << "there are " << dll.getCount() << " items int the list" << std::endl;
-
-    //dll.removeValue(123);
-    std::cout << dll.traversingFromHead() << std::endl;
-    std::cout << "from tail: " << dll.traversingFromTail() << std::endl;
-
-    dll.insertAfter(24100, 34531);
-    std::cout << dll.traversingFromHead() << std::endl;
-    dll.insertTail(1000000);
-    std::cout << dll.traversingFromHead() << std::endl;
-
-    std::cout << "from tail: " << dll.traversingFromTail() << std::endl;
-    dll.insertAfter(123, 888);
-
-    std::cout << dll.traversingFromHead() << std::endl;
-
-    std::cout << "from tail: " << dll.traversingFromTail() << std::endl;
-
-    dll.removeValue(12);
-
-    std::cout << dll.traversingFromHead() << std::endl;
-
-    std::cout << "from tail: " << dll.traversingFromTail() << std::endl;
-
-    dll.insertAfter(888, 1000);
-    std::cout << dll.traversingFromHead() << std::endl;
-
-    std::cout << "from tail: " << dll.traversingFromTail() << std::endl;
-
-    DoublyLinkedList<int> dll2 (9999);
-
-    dll2.insertAfter(9999, 8888);
-
-    dll2.removeValue(77777);
-
-    std::cout << dll2.traversingFromHead() << std::endl;
-
-    std::cout << dll2.traversingFromTail() << std::endl;
+    std::cout << std::endl;
+    Dlist list4 ({1, 2, 3, 4, 5, 6, 7});
+    std::cout << "list4 from the head: " << list4.printFromHead() << " It has " <<
+    list4.getNodeCount() << " nodes\n";
+    list4.removeHead();
+    std::cout << "list4 after removing head node: " << list4.printFromHead() << " Now it has " <<
+    list4.getNodeCount() << " nodes\n";
+    list4.removeTail();
+    std::cout << "list4 after removing tail node: " << list4.printFromHead() << " Now it has " <<
+    list4.getNodeCount() << " nodes\n";
     
+    list4.removeDataItem(4);   
+    std::cout << "after removing 4, list4 from head: " << list4.printFromHead() << "\n"; 
+    std::cout << "after removing 4, list4 from tail: " << list4.printFromTail() << "\n"; 
+    std::cout << "Now list4 has " << list4.getNodeCount() << " nodes\n";
+
+    list4.insertAfter(3, 4);
+    std::cout << "after inserting 4 after 3, list4 from head: " << list4.printFromHead() << "\n"; 
+    std::cout << "after inserting 4 after 3, list4 from tail: " << list4.printFromTail() << std::endl; 
+
+    list4.insertBefore(5, 555);
+    std::cout << "after inserting 555 before 5, list4 from head: " << list4.printFromHead() << "\n"; 
+    std::cout << "after inserting 555 before 5, list4 from tail: " << list4.printFromTail() << "\n"; 
+
     return 0;
+}
+
+struct Dlist::Node
+{
+    Node* next = nullptr;
+    Node* previous = nullptr;
+    int data;
+};
+
+Dlist::Node* Dlist::buildNode (int val)
+{
+    Node* ptr = new Node;
+    ptr->data = val;
+    nodeCount++;
+    return ptr;
+}
+
+Dlist::Dlist ()
+{
+    Node* ptr = buildNode(0);
+    head = ptr;
+    tail = ptr;
+}
+
+Dlist::Dlist (int val)
+{
+    Node* ptr = buildNode(val);
+    head = ptr;
+    tail = ptr;    
+}
+
+Dlist::Dlist (std::initializer_list<int> il): Dlist(*il.begin())
+{
+    for (auto it = (il.begin() + 1); it!=il.end(); it++)
+        insertTail(*it);
+}
+
+Dlist::Dlist (const std::vector<int> vec)
+{
+    if (vec.empty())
+    {
+        Node* ptr = buildNode(0);
+        head = ptr;
+        tail = ptr; 
+        return;       
+    }
+    
+    Node* ptr = buildNode(vec[0]);
+    head = ptr;
+    tail = ptr;
+
+    for(int i = 1; i<vec.size(); i++)
+        insertTail(vec[i]);
+
+}
+
+Dlist::~Dlist()
+{
+    clean(head);
+}
+
+void Dlist::insertHead (int val)
+{
+    Node* ptr = buildNode(val);
+    ptr->next = head;
+    head = ptr;
+}
+
+void Dlist::insertTail (int val)
+{
+    Node* ptr = buildNode(val);
+    tail->next = ptr;
+    ptr->previous = tail;
+    tail = ptr;
+}
+
+int Dlist::getHeadDataItem () const
+{
+    return head->data;
+}
+
+int Dlist::getTailDataItem () const
+{
+    return tail->data;
+}
+
+int Dlist::getNodeCount () const
+{
+    return nodeCount;
+}
+
+void Dlist::dataItemstoVector (std::vector<int>& vec) const
+{
+    Node* ptr = head;
+    while (ptr)
+    {
+        vec.push_back(ptr->data);
+        ptr = ptr->next;
+    }
+}
+
+std::string Dlist::printFromHead () const
+{
+    std::string str = "";
+    Node* ptr = head;
+
+    while (ptr)
+    {   
+        str += std::to_string(ptr->data) + " ";
+        ptr = ptr->next;
+    }
+
+    return str;
+}
+
+std::string Dlist::printFromTail () const
+{
+    std::string str = "";
+    Node* ptr = tail;
+
+    while (ptr)
+    {   
+        str += std::to_string(ptr->data) + " ";
+        ptr = ptr->previous;
+    }
+
+    return str;    
+}
+
+void Dlist::removeHead ()
+{
+    if(nodeCount==1) return;
+
+    Node* ptr = head;
+    head = ptr->next;
+    head->previous = nullptr;
+    delete ptr;
+    nodeCount--;
+}
+
+void Dlist::removeTail ()
+{
+    if (nodeCount==1) return;
+
+    Node* ptr = tail;
+    tail = ptr->previous;
+    tail->next = nullptr;
+    delete ptr;
+    nodeCount--;
+}
+
+void Dlist::removeDataItem (int val)
+{
+    if (nodeCount==1 && val==head->data)
+    {
+        head->data = 0;
+        return;
+    }
+
+    if (val==head->data) 
+    {
+        removeHead();
+        return;
+    }
+
+    if (val==tail->data)
+    {
+        removeTail();
+        return;
+    } 
+
+    Node* temp = head;
+    Node* temp2 = temp->next;
+
+    while(temp2)
+    {
+        if(temp->data==val)
+        {
+            temp->previous->next = temp->next;
+            temp->next->previous = temp->previous;
+            nodeCount--;
+            delete temp;
+            return;
+        }
+
+        temp = temp->next;
+        temp2 = temp2->next;
+    }
+}
+
+void Dlist::insertAfter (int val1, int val2)
+{
+    if((val1 == head->data && nodeCount == 1) || (val1 == tail->data))
+    {
+        insertTail(val2);
+        return;
+    }
+    
+    if (nodeCount == 1 && val1 != head->data) return;
+
+    Node* temp = head;
+
+    while (temp)
+    {
+        if (temp->data == val1)
+        {
+            Node* temp2 = buildNode(val2);
+            temp2->next = temp->next;
+            temp2->previous = temp;
+            temp->next = temp2;
+            temp2->next->previous = temp2;
+            return;
+        }
+        temp = temp->next;
+    }
+}
+
+void Dlist::insertBefore (int val1, int val2)
+{
+    if(nodeCount==1 && head->data != val1) return;
+
+    if(head->data == val1)
+    {
+        insertHead(val2);
+        return;
+    }
+
+    Node* temp = head;
+
+    while(temp)
+    {
+        if(temp->data == val1)
+        {
+            Node* temp2 = buildNode(val2);
+            temp2->next = temp;
+            temp2->previous = temp->previous;
+            temp->previous->next = temp2;
+            temp->previous = temp2;
+            return;
+        }
+        temp = temp->next;
+    }
+}
+
+void Dlist::clean(Dlist::Node* ptr)
+{
+    Node* temp = ptr;
+
+    while (ptr)
+    {
+        temp = ptr;
+        ptr = ptr->next;
+        delete temp;
+    }
+
+    tail = nullptr;
 }
