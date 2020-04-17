@@ -72,8 +72,9 @@ public:
     void insertBefore (int, int);
 
     //this method searchers for a value in the list
-    //returns true if the value is found and false if not    
-    bool search (int) const;
+    //returns true if the value is found and false if not 
+    //it can search either from the head or from the tail, default option is head   
+    bool search (int, bool = true) const;
 
 private:
     //structure for a node
@@ -89,6 +90,12 @@ private:
     
     //helper method for freeing up the memory
     void clean (Node*);
+
+    //helper method which starts search from the head
+    bool searchFromHead (int) const;
+
+    //helper method which starts search from the tail
+    bool searchFromTail (int) const;    
 };
 
 int main ()
@@ -130,7 +137,18 @@ int main ()
     list4.insertBefore(5, 555);
     std::cout << "after inserting 555 before 5, list4 from head: " << list4.printFromHead() << "\n"; 
     std::cout << "after inserting 555 before 5, list4 from tail: " << list4.printFromTail() << "\n"; 
+    
+    if(list4.search(555))
+        std::cout << "555 is in list4" << std::endl;
+    else
+        std::cout << "555 is NOT in list4" << std::endl;
 
+    
+    if(list4.search(100))
+        std::cout << "100 is in list4" << std::endl;
+    else
+        std::cout << "100 is NOT in list4" << std::endl;
+    
     return 0;
 }
 
@@ -388,4 +406,40 @@ void Dlist::clean(Dlist::Node* ptr)
     }
 
     tail = nullptr;
+}
+
+bool Dlist::search (int val, bool beginning) const
+{
+    if(beginning)
+        return searchFromHead(val);
+    else
+        return searchFromTail(val); 
+}
+
+bool Dlist::searchFromHead (int val) const
+{
+    Node* tmp = head;
+
+    while(tmp)
+    {
+        if(tmp->data == val) return true;
+
+        tmp = tmp->next;
+    }
+
+    return false;
+}
+
+bool Dlist::searchFromTail (int val) const
+{
+    Node* tmp = tail;
+
+    while(tmp)
+    {
+        if(tmp->data == val) return true;
+
+        tmp = tmp->previous;
+    }
+
+    return false;
 }
