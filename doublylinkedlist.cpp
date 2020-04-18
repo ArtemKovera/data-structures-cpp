@@ -21,9 +21,10 @@ public:
     //this constructor creats a list whose nodes contain data items from the vector passed as a parameter
     explicit Dlist (const std::vector<int>); 
 
-    Dlist (const Dlist&) = delete; 
+    Dlist (const Dlist&); 
 
-    Dlist& operator = (const Dlist&) = delete; 
+    //exception safe assignment operator     
+    Dlist& operator = (const Dlist&); 
 
     Dlist (Dlist&&) = delete;
 
@@ -95,7 +96,14 @@ private:
     bool searchFromHead (int) const;
 
     //helper method which starts search from the tail
-    bool searchFromTail (int) const;    
+    bool searchFromTail (int) const; 
+
+    //helper method which returns a data item of a node
+    //this method takes a node pointer as its parameter    
+    int getData (Node*) const;
+
+    //helper method for swaping lists
+    void swap (Dlist&, Dlist&) noexcept;        
 };
 
 int main ()
@@ -148,6 +156,16 @@ int main ()
         std::cout << "100 is in list4" << std::endl;
     else
         std::cout << "100 is NOT in list4" << std::endl;
+    
+
+    Dlist list5(list4);
+    std::cout << "list5 from head: " << list5.printFromHead() << " (same as list4)" << "\n"; 
+    std::cout << "list5 from tail: " << list5.printFromTail() << "\n";
+
+    Dlist list6({11, 22, 33, 44, 55, 66, 77});
+    std::cout << "list6 from head: " << list6.printFromHead() << "\n";    
+    list5 = list6;
+    std::cout << "after assignment to list6, list5 from head: " << list5.printFromHead() << " (same as list6)" << "\n";
     
     return 0;
 }
@@ -204,6 +222,31 @@ Dlist::Dlist (const std::vector<int> vec)
     for(int i = 1; i<vec.size(); i++)
         insertTail(vec[i]);
 
+}
+
+Dlist::Dlist (const Dlist& src)
+{
+    Node* temp = src.head;
+
+    Node* ptr = buildNode(temp->data);
+    head = ptr;
+    tail = ptr;
+    
+    temp = temp->next;
+    while (temp)
+    {
+        insertTail(src.getData(temp));
+        temp = temp->next;
+    }    
+}
+
+Dlist& Dlist::operator= (const Dlist& src)
+{
+    if (this == &src) return *this;
+
+    Dlist temp (src);
+    swap(*this, temp);
+    return *this;
 }
 
 Dlist::~Dlist()
@@ -442,4 +485,17 @@ bool Dlist::searchFromTail (int val) const
     }
 
     return false;
+}
+
+int Dlist::getData (Node* ptr) const
+{
+    return ptr->data;
+}
+
+void Dlist::swap (Dlist& first, Dlist& second) noexcept
+{
+    using std::swap;
+    swap(first.head, second.head);
+    swap(first.tail, second.tail);
+    swap(first.nodeCount, second.nodeCount);
 }
