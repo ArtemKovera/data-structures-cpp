@@ -26,9 +26,9 @@ public:
     //exception safe assignment operator     
     Dlist& operator = (const Dlist&); 
 
-    Dlist (Dlist&&) = delete;
+    Dlist (Dlist&&) noexcept;
 
-    Dlist& operator = (Dlist&&) = delete;
+    Dlist& operator = (Dlist&&) noexcept;
 
     virtual ~Dlist();
 
@@ -77,6 +77,9 @@ public:
     //it can search either from the head or from the tail, default option is head   
     bool search (int, bool = true) const;
 
+   //helper method used in move constructor and assignment operator
+    void moveFrom (Dlist&) noexcept;
+
 private:
     //structure for a node
     struct Node;
@@ -103,7 +106,9 @@ private:
     int getData (Node*) const;
 
     //helper method for swaping lists
-    void swap (Dlist&, Dlist&) noexcept;        
+    void swap (Dlist&, Dlist&) noexcept; 
+
+
 };
 
 int main ()
@@ -166,6 +171,12 @@ int main ()
     std::cout << "list6 from head: " << list6.printFromHead() << "\n";    
     list5 = list6;
     std::cout << "after assignment to list6, list5 from head: " << list5.printFromHead() << " (same as list6)" << "\n";
+
+    std::cout << std::endl;
+    list5 = std::move(list4);
+    std::cout << "list5 after move assignment of list4: " << list5.printFromHead() << " (same as list4)" << std::endl;
+    Dlist list7(std::move(list6));
+    std::cout << "list7 made by using move constructor with list6 argument: " << list7.printFromHead() << " (same as list6)" << std::endl;
     
     return 0;
 }
@@ -240,12 +251,26 @@ Dlist::Dlist (const Dlist& src)
     }    
 }
 
+Dlist::Dlist (Dlist&& src) noexcept
+{
+    moveFrom(src);
+}
+
 Dlist& Dlist::operator= (const Dlist& src)
 {
     if (this == &src) return *this;
 
     Dlist temp (src);
     swap(*this, temp);
+    return *this;
+}
+
+Dlist& Dlist::operator= (Dlist&& src) noexcept
+{
+    if (this == &src) return *this;
+    
+    clean(head);
+    moveFrom(src);
     return *this;
 }
 
@@ -498,4 +523,15 @@ void Dlist::swap (Dlist& first, Dlist& second) noexcept
     swap(first.head, second.head);
     swap(first.tail, second.tail);
     swap(first.nodeCount, second.nodeCount);
+}
+
+void Dlist::moveFrom (Dlist& src) noexcept
+{
+    head = src.head;
+    tail = src.tail;
+    nodeCount = src.nodeCount;
+
+    src.head = nullptr;
+    src.tail = nullptr;
+    nodeCount = 0;
 }
