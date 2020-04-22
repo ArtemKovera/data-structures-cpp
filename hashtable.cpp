@@ -1,6 +1,6 @@
 //hash table with C++
 //this hash table uses open hashing utilizing chaining 
-//to use ht1 most efficiently, the keys should be uniformly distributed
+//to use the hash table most efficiently, the keys should be uniformly distributed
 #include <iostream>
 
 class HashTable
@@ -10,6 +10,14 @@ public:
     HashTable ();
     
     HashTable (const int);
+
+    HashTable (const HashTable&) = delete;
+
+    HashTable& operator=(const HashTable&) = delete;
+
+    HashTable& operator=(HashTable&&) = delete;
+
+    HashTable (HashTable&&) = delete;
 
     virtual ~HashTable ();
     
@@ -37,7 +45,6 @@ private:
         };
         int nodeCount;
         Node* head;
-        ~LinkedList ();
         Node* buildNode (int);
         int getNodeCount () const;
         void sortedInsert (const int);
@@ -47,7 +54,7 @@ private:
     }; 
 
     //array of 20 nested Linked List data structures
-    LinkedList arrayOfLinkedLists [20];
+    LinkedList* arrayOfLinkedLists = new LinkedList [20];
 
     int totalCountOfEntries;
 
@@ -55,8 +62,6 @@ private:
 
 int main ()
 {
-    //std::cout << sizeof(HashTable) << std::endl;
-
     HashTable ht1;
 
     ht1.insert(45);
@@ -225,11 +230,6 @@ void HashTable::LinkedList::clean (Node* ptr)
 
 }
 
-HashTable::LinkedList::~LinkedList ()
-{
-    clean (head);
-}
-
 HashTable::HashTable (): totalCountOfEntries{0} {}
 
 HashTable::HashTable (int val): HashTable()
@@ -239,7 +239,10 @@ HashTable::HashTable (int val): HashTable()
 
 HashTable::~HashTable ()
 {
-    
+    for (int i = 0; i < 20; i++)
+        arrayOfLinkedLists[i].clean(arrayOfLinkedLists[i].head);
+
+    delete [] arrayOfLinkedLists;
 }
 
 int HashTable::hashFunction (int val) const
