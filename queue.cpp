@@ -2,11 +2,12 @@
 //by using underlying array data structure 
 #include<iostream>
 #include<stdexcept>
+#include<utility>
 
 class Queue
 {
 public:
-    //default constructor creates an empty queue with default size
+    //default constructor creates an empty queue with default size, which is 100
     Queue ();
     
     //this constructor creates an empty queue whose size is equal to the parameter of this costructor
@@ -14,13 +15,13 @@ public:
 
     Queue (const Queue&) = delete;
 
-    Queue (Queue&&) = delete;
+    Queue (Queue&&) noexcept;
 
     Queue& operator= (const Queue&) = delete;
 
-    Queue& operator= (Queue&&) = delete;
+    Queue& operator= (Queue&&) noexcept;
 
-    ~Queue ();
+    virtual ~Queue ();
     
     //method to add an element to a queue
     void enqueue (int);
@@ -28,23 +29,29 @@ public:
     //method to delete an element from a queue
     void dequeue ();
     
-    //
-    bool isEmpty ();
-    bool isFull ();
+    bool isEmpty () const;
+    bool isFull () const;
     
-    //this method returns front element of the queue
-    int front();
+    //this method returns the front element of the queue
+    int front() const;
 
-    //this method returns back element of the queue
-    int back();
+    //this method returns the back element of the queue
+    int back() const;
 
 private:
     int size;
 
     //pointer to initialize the queue
-    int *Q;    
+    int *Q; 
+
     int *head = nullptr;
     int *tail = nullptr;
+
+    //helper method for freeing up memory
+    void clean ();
+
+    //helper method for move constructor and move assignment operator
+    void moveFrom(Queue&) noexcept;
 };
 
 int main ()
@@ -91,6 +98,16 @@ int main ()
     else
         std::cout << "q3 is NOT empty" << std::endl;
     
+    ////////////
+    std::cout << std::endl;
+    Queue q4(std::move(q2));
+    std::cout << "q4 front: " << q4.front() << "  |  q4 back: " << q4.back() << std::endl;
+
+    if (q4.isFull())
+        std::cout << "q4 is full" << std::endl;
+    else
+        std::cout << "q4 is NOT full" << std::endl;    
+    
     return 0;
 }
 
@@ -98,12 +115,24 @@ Queue::Queue(int s): size{s}, Q{new int [size]}, head{Q}, tail{Q} {};
 
 Queue::Queue(): size{100}, Q{new int [size]}, head{Q}, tail{Q} {};
 
+Queue::Queue (Queue&& src) noexcept
+{
+    moveFrom(src);
+}
+
+Queue& Queue::operator= (Queue&& src) noexcept
+{
+    if(this==&src) return *this;
+
+    clean();
+    moveFrom(src);
+
+    return *this;
+}
+
 Queue::~Queue()
 {
-    delete [] Q;
-    head = nullptr;
-    tail = nullptr;
-    Q = nullptr;
+    clean();
 }
 
 void Queue::enqueue(int val)
@@ -121,7 +150,7 @@ void Queue::dequeue()
     head++;
 }
 
-bool Queue::isEmpty ()
+bool Queue::isEmpty () const
 {
     if(tail==head) 
         return true;
@@ -129,7 +158,7 @@ bool Queue::isEmpty ()
         return false;
 }
 
-bool Queue::isFull ()
+bool Queue::isFull () const
 {
     if (tail == Q + size)
         return true;
@@ -137,17 +166,38 @@ bool Queue::isFull ()
         return false;
 }
 
-int Queue::front ()
+int Queue::front () const
 {
     if(head == tail) throw std::out_of_range("this queue has no elements");
     
     return *head;
 }
 
-int Queue::back ()
+int Queue::back () const
 {
     if(head == tail) throw std::out_of_range("this queue has no elements");
     
     return *(tail-1);    
+}
+
+void Queue::clean ()
+{
+    delete [] Q;
+    head = nullptr;
+    tail = nullptr;
+    Q = nullptr;
+}
+
+void Queue::moveFrom (Queue& src) noexcept
+{
+    size = src.size;
+    head = src.head;
+    tail = src.tail;
+    Q = src.Q;
+
+    src.size = 0;
+    src.head = nullptr;
+    src.tail = nullptr;
+    src.Q = nullptr;
 }
 
