@@ -11,7 +11,7 @@ public:
     Queue ();
     
     //this constructor creates an empty queue whose size is equal to the parameter of this costructor
-    Queue (int);
+    explicit Queue (const int);
 
     Queue (const Queue&) = delete;
 
@@ -24,7 +24,7 @@ public:
     virtual ~Queue ();
     
     //method to add an element to a queue
-    void enqueue (int);
+    void enqueue (const int);
 
     //method to delete an element from a queue
     void dequeue ();
@@ -42,7 +42,7 @@ private:
     int size;
 
     //pointer to initialize the queue
-    int *Q; 
+    int *Q = nullptr; 
 
     int *head = nullptr;
     int *tail = nullptr;
