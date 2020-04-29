@@ -11,7 +11,7 @@ public:
     Stack ();
 
     //this constructor creates an empty stack whose size is equal to the parameter of this costructor
-    Stack (const int);
+    explicit Stack (const int);
 
     Stack (const Stack&) = delete;
 
