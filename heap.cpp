@@ -1,6 +1,7 @@
 //min heap data structure implementation in C++
 #include<iostream>
 #include<vector>
+#include<utility>
 
 class Heap
 {
@@ -9,25 +10,29 @@ public:
     Heap ();
 
     //this constructor creates an empty heap whose operational size is equal to the argument of this constructor 
-    explicit Heap (const int);
+    explicit Heap(const int);
 
     //this method inserts a single element into a heap
-    void insert (const int);
+    void insert(const int);
 
     //this method inserts the elements of the vector taken as a parameter
-    void insert (const std::vector<int>&);
+    void insert(const std::vector<int>&);
 
     //this method returns a vector of the sorted elements from a heap
-    std::vector<int> sort ();
+    std::vector<int> sort();
 
     //this method returns the root element of a heap
-    int getRoot () const;
+    int getRoot() const;
 
     //this method deletes the root element of a heap
-    void deleteRoot ();
+    void deleteRoot();
+
+    int getOperationalSize() const;
+
+    int getCurrentSize() const;    
 
     //just temporary method
-    void print ()
+    void print()
     {
         for(int i = 0; i<currentSize; i++)
             std::cout << heapPointer[i] << " ";
@@ -45,6 +50,9 @@ private:
 
     //pointer pointing to a heap
     int* heapPointer;
+
+    //helper method for swaping heap's elements
+    void heapify(int);
 };
 
 int main ()
@@ -64,6 +72,20 @@ int main ()
     h1.print();
 
     std::cout << "the root element of h1 is " << h1.getRoot() << std::endl;
+
+    h1.deleteRoot();
+
+    h1.print();    
+    std::cout << "the root element of h1 is " << h1.getRoot() << std::endl;
+
+    h1.insert(1);
+
+    h1.print();
+
+    std::cout << "the total operational size of h1 is " << h1.getOperationalSize() << std::endl;
+    std::cout << "the current size h1 is " << h1.getCurrentSize() << std::endl;
+
+
 
     return 0;
 }
@@ -106,4 +128,41 @@ void Heap::insert (const std::vector<int>& vec)
 int Heap::getRoot() const
 {
     return heapPointer[0];
+}
+
+void Heap::heapify(int index)
+{
+    int temp, left, right;
+
+    left = 2 * index + 1;
+    right = 2 * index + 2;
+
+    if (left < currentSize)
+    {
+        if (heapPointer[index] > heapPointer[left])
+        {
+            std::swap(heapPointer[index], heapPointer[left]);
+            heapify(right);
+        }
+    }
+}
+
+
+void Heap::deleteRoot()
+{
+    if(currentSize == 0) return;
+
+    heapPointer[0] = heapPointer[currentSize - 1];
+    currentSize--;
+    heapify(0);
+}
+
+int Heap::getCurrentSize() const
+{
+    return currentSize;
+}
+
+int Heap::getOperationalSize() const
+{
+    return size;
 }
