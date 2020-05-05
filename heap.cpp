@@ -7,19 +7,26 @@ class Heap
 {
 public:
     //default constructor creates an empty heap with a default operational size, which is 100
-    Heap ();
+    Heap();
 
     //this constructor creates an empty heap whose operational size is equal to the argument of this constructor 
     explicit Heap(const int);
+
+    virtual ~Heap();
+
+    Heap(const Heap&) = delete;
+
+    Heap& operator=(const Heap&) = delete;
+
+    Heap(Heap&&) = delete;
+
+    Heap& operator=(Heap&&) = delete;
 
     //this method inserts a single element into a heap
     void insert(const int);
 
     //this method inserts the elements of the vector taken as a parameter
     void insert(const std::vector<int>&);
-
-    //this method returns a vector of the sorted elements from a heap
-    std::vector<int> sort();
 
     //this method returns the root element of a heap
     int getRoot() const;
@@ -53,6 +60,9 @@ private:
 
     //helper method for swaping heap's elements
     void heapify(int);
+
+    //helper function for freeing up memory
+    void clean (int*);
 };
 
 int main ()
@@ -85,7 +95,10 @@ int main ()
     std::cout << "the total operational size of h1 is " << h1.getOperationalSize() << std::endl;
     std::cout << "the current size h1 is " << h1.getCurrentSize() << std::endl;
 
+    Heap h2(200);
 
+    std::cout << "the total operational size of h2 is " << h2.getOperationalSize() << std::endl;
+    std::cout << "the current size h2 is " << h2.getCurrentSize() << std::endl;    
 
     return 0;
 }
@@ -93,6 +106,11 @@ int main ()
 Heap::Heap(): size{100}, currentSize{0}, heapPointer{new int [100]} {}
 
 Heap::Heap(int s): size{s}, currentSize{0}, heapPointer{new int [size]} {}
+
+Heap::~Heap()
+{
+    clean(heapPointer);
+}
 
 void Heap::insert(const int val)
 {
@@ -147,7 +165,6 @@ void Heap::heapify(int index)
     }
 }
 
-
 void Heap::deleteRoot()
 {
     if(currentSize == 0) return;
@@ -166,3 +183,10 @@ int Heap::getOperationalSize() const
 {
     return size;
 }
+
+void Heap::clean(int* ptr)
+{
+    delete [] ptr;
+    ptr = nullptr;
+}
+
