@@ -18,9 +18,9 @@ public:
 
     Heap& operator=(const Heap&) = delete;
 
-    Heap(Heap&&) = delete;
+    Heap(Heap&&) noexcept;
 
-    Heap& operator=(Heap&&) = delete;
+    Heap& operator=(Heap&&) noexcept;
 
     //this method inserts a single element into a heap
     void insert(const int);
@@ -63,6 +63,9 @@ private:
 
     //helper function for freeing up memory
     void clean (int*);
+
+    //helper method used for moving an object of a heap
+    void moveFrom (Heap&) noexcept;
 };
 
 int main ()
@@ -75,37 +78,55 @@ int main ()
     h1.insert(25);
     h1.insert(4);
     h1.insert(4);
-
     std::vector<int> vec1 {1, 3, 5, 19};
-
     h1.insert(vec1);
-    h1.print();
-
     std::cout << "the root element of h1 is " << h1.getRoot() << std::endl;
-
     h1.deleteRoot();
-
-    h1.print();    
     std::cout << "the root element of h1 is " << h1.getRoot() << std::endl;
-
     h1.insert(1);
-
-    h1.print();
-
     std::cout << "the total operational size of h1 is " << h1.getOperationalSize() << std::endl;
     std::cout << "the current size h1 is " << h1.getCurrentSize() << std::endl;
+    std::cout << std::endl;
 
     Heap h2(200);
-
     std::cout << "the total operational size of h2 is " << h2.getOperationalSize() << std::endl;
     std::cout << "the current size h2 is " << h2.getCurrentSize() << std::endl;    
+    h2.insert(33);
+    h2.insert(333);
+    std::cout << "now, the total operational size of h2 is " << h2.getOperationalSize() << std::endl;
+    std::cout << "now, the current size h2 is " << h2.getCurrentSize() << std::endl;
+    std::cout << std::endl;
+    
+    Heap h3(std::move(h2));
+    std::cout << "the total operational size of h3 is " << h3.getOperationalSize() << std::endl;
+    std::cout << "the current size h3 is " << h3.getCurrentSize() << std::endl; 
+    std::cout << std::endl;
 
+    Heap h4;
+    h4 = std::move(h3);
+    std::cout << "the total operational size of h4 is " << h4.getOperationalSize() << std::endl;
+    std::cout << "the current size h4 is " << h4.getCurrentSize() << std::endl;     
     return 0;
 }
 
 Heap::Heap(): size{100}, currentSize{0}, heapPointer{new int [100]} {}
 
 Heap::Heap(int s): size{s}, currentSize{0}, heapPointer{new int [size]} {}
+
+Heap::Heap(Heap&& src) noexcept
+{
+    moveFrom(src);
+}
+
+Heap& Heap::operator=(Heap&& src) noexcept
+{
+    if(this == &src) return *this;
+    
+    clean(heapPointer);
+    moveFrom(src);
+
+    return *this;
+}
 
 Heap::~Heap()
 {
@@ -190,3 +211,13 @@ void Heap::clean(int* ptr)
     ptr = nullptr;
 }
 
+void Heap::moveFrom(Heap& src) noexcept
+{
+    heapPointer = src.heapPointer;
+    size = src.size;
+    currentSize = src.currentSize;
+
+    src.heapPointer = nullptr;
+    src.size = 0;
+    src.currentSize = 0;
+}
