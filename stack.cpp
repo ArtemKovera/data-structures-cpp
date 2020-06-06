@@ -14,7 +14,7 @@ public:
     //this constructor creates an empty stack whose size is equal to the parameter of this costructor
     explicit Stack (size_t);
 
-    Stack (const Stack&) = delete;
+    Stack (const Stack&);
 
     Stack& operator= (const Stack&) = delete;
 
@@ -121,6 +121,20 @@ int main ()
     st2 = std::move(st1);
 
     std::cout<<"Now st2 has " << st2.getSize() << " elements" << std::endl;
+    std::cout << "-----------------------------------" << std::endl;
+    Stack st3(10);
+    st3.push(1);
+    st3.push(2);
+    st3.push(3);
+    st3.push(4);
+    std::cout << "top of st3 is " << st3.top() << std::endl;
+    std::cout << "st3 has " << st3.getSize() << " elements" << std::endl;
+    Stack st4(st3);
+    std::cout << "top of st4 is " << st4.top() << std::endl;
+    std::cout << "st4 has " << st4.getSize() << " elements" << std::endl;
+    st4.push(5);    
+    std::cout << "now top of st4 is " << st4.top() << std::endl;
+    std::cout << "now st4 has " << st4.getSize() << " elements" << std::endl;
 
     return 0;
 }
@@ -131,6 +145,27 @@ Stack::Stack(): size{defaultSize}, startPointer{new int [size + 1]}, topPointer{
 
 Stack::Stack(size_t val): size{val}, startPointer{new int [val + 1]}, topPointer{startPointer}
 {}
+
+Stack::Stack(const Stack& src)
+{
+    std::cout << "000" <<std::endl;
+    size = src.size;
+    std::cout << "111" <<std::endl;
+    startPointer = new int [size + 1];
+    std::cout << "222" <<std::endl;
+    size_t i = 0;
+    while(src.startPointer + i != src.topPointer)
+    {
+        std::cout << "333" <<std::endl;
+        startPointer[i] = src.startPointer[i];
+        std::cout << "444" <<std::endl;
+        i++;
+    }
+    std::cout << "555" <<std::endl;
+    topPointer = startPointer + i - 1;
+    std::cout << "666" <<std::endl;
+
+}
 
 Stack::Stack(Stack&& src) noexcept
 {
