@@ -2,6 +2,7 @@
 //by using underlying array data structure 
 #include<iostream>
 #include<stdexcept>
+#include<utility>
 
 
 
@@ -14,12 +15,16 @@ public:
     //this constructor creates an empty stack whose size is equal to the parameter of this costructor
     explicit Stack (size_t);
 
+    //copy constructor
     Stack (const Stack&);
 
-    Stack& operator= (const Stack&) = delete;
-
+    //exception safe assignment operator
+    Stack& operator= (const Stack&);
+    
+    //move constructor
     Stack (Stack&&) noexcept;
 
+    //move assignment operator
     Stack& operator= (Stack&&) noexcept;
 
     virtual ~Stack ();
@@ -63,78 +68,110 @@ private:
 
     //helper method used in move constructor and assignment operator
     void moveFrom (Stack&) noexcept;
+
+    //helper method used in copy assignment operator
+    void swap(Stack&, Stack&) noexcept;
 };
 
 int main ()
-{ 
+{  
+    std::cout << "Testing the general functionality of the stack data structure" << std::endl;
     Stack st1(2);
-
     if(st1.isEmpty())
     {
-        std::cout<<"The stack is empty"<<std::endl;
+        std::cout<<"st1 is empty"<<std::endl;
     }
-
     if(st1.isFull())
     {
-        std::cout<<"The stack is full"<<std::endl;
+        std::cout<<"st1 is full"<<std::endl;
     }
-
     st1.push(10);
-
     std::cout<<st1.top()<<std::endl;
-
     if(st1.isFull())
     {
-        std::cout<<"The stack is full"<<std::endl;
+        std::cout<<"st1 is full"<<std::endl;
     }
     else
     {
-        std::cout<<"The stack is NOT full"<<std::endl;
+        std::cout<<"st1 is NOT full"<<std::endl;
     }
-
     st1.pop();
-    
     if(st1.isEmpty())
     {
-        std::cout<<"The stack is empty"<<std::endl;
+        std::cout<<"st1 is empty"<<std::endl;
     }
-    std::cout<<st1.getSize()<<std::endl;
+    std::cout<<"st1 can have " << st1.getSize() << " elements" << std::endl;
 
     Stack st2;
-
-    std::cout<<"st2 has " << st2.getSize() << " elements" << std::endl;
+    std::cout<<"st2 can have " << st2.getSize() << " elements" << std::endl;
     if(st2.isEmpty())
     {
-        std::cout<<"The st2 stack is empty"<<std::endl;
+        std::cout<<"st2 stack is empty"<<std::endl;
     }
-
     st2.push(25);
     if(st2.isEmpty())
     {
-        std::cout<<"The st2 stack is empty"<<std::endl;
+        std::cout<<"st2 stack is empty"<<std::endl;
     }
     else
     {
-        std::cout<<"The st2 stack is not empty"<<std::endl;
+        std::cout<<"Now st2 stack is not empty"<<std::endl;
     }
+    std::cout<<std::endl;
+ 
 
+    std::cout<<"-------------------------------------"<<std::endl;
+    std::cout << "Testing the move assignment operator of the stack data structure" << std::endl;
     st2 = std::move(st1);
+    try
+    {
+        st2.top();
+    }
+    catch(std::out_of_range& e)
+    {
+        std::cout<<e.what()<<std::endl;
+    }
+    std::cout<<"Now st2 can have " << st2.getSize() << " elements" << std::endl;
+    std::cout<<std::endl;
 
-    std::cout<<"Now st2 has " << st2.getSize() << " elements" << std::endl;
-    std::cout << "-----------------------------------" << std::endl;
-    Stack st3(10);
+
+    std::cout<<"-------------------------------------"<<std::endl;
+    std::cout << "Testing the move constructor of the stack data structure" << std::endl;    
+    Stack st3;
     st3.push(1);
     st3.push(2);
     st3.push(3);
     st3.push(4);
     std::cout << "top of st3 is " << st3.top() << std::endl;
-    std::cout << "st3 has " << st3.getSize() << " elements" << std::endl;
-    Stack st4(st3);
+    std::cout << "st3 can have " << st3.getSize() << std::endl;
+    Stack st4(std::move(st3));
     std::cout << "top of st4 is " << st4.top() << std::endl;
-    std::cout << "st4 has " << st4.getSize() << " elements" << std::endl;
-    st4.push(5);    
-    std::cout << "now top of st4 is " << st4.top() << std::endl;
-    std::cout << "now st4 has " << st4.getSize() << " elements" << std::endl;
+    std::cout << "st4 can have " << st4.getSize() << std::endl;    
+    std::cout<<std::endl;
+   
+    
+    std::cout <<"-------------------------------------" << std::endl;
+    std::cout << "Testing the copy assignment operator of the stack data structure" << std::endl;
+    Stack st5(10);
+    st5.push(101);
+    st5.push(102);
+    st5.push(103);
+    st5.push(104);
+    st5.push(105);
+    std::cout << "top of st5 is " << st5.top() << std::endl;
+    std::cout << "st5 can have " << st5.getSize() << std::endl;
+    st5 = st4;
+    std::cout << "now top of st5 is " << st5.top() << std::endl;
+    std::cout << "now st5 can have " << st5.getSize() << std::endl; 
+    std::cout<<std::endl;
+
+
+    std::cout << "-----------------------------------" << std::endl;
+    std::cout << "Testing the copy constructor of the stack data structure" << std::endl;
+    Stack st6(st4);
+    std::cout << "top of st6 is " << st6.top() << std::endl;
+    std::cout << "st6 can have " << st6.getSize() << std::endl;   
+    
 
     return 0;
 }
@@ -148,23 +185,26 @@ Stack::Stack(size_t val): size{val}, startPointer{new int [val + 1]}, topPointer
 
 Stack::Stack(const Stack& src)
 {
-    std::cout << "000" <<std::endl;
     size = src.size;
-    std::cout << "111" <<std::endl;
     startPointer = new int [size + 1];
-    std::cout << "222" <<std::endl;
     size_t i = 0;
     while(src.startPointer + i != src.topPointer)
     {
-        std::cout << "333" <<std::endl;
         startPointer[i] = src.startPointer[i];
-        std::cout << "444" <<std::endl;
         i++;
     }
-    std::cout << "555" <<std::endl;
-    topPointer = startPointer + i - 1;
-    std::cout << "666" <<std::endl;
+    startPointer[i] = src.startPointer[i];
+    topPointer = startPointer + i;
+}
 
+Stack& Stack::operator=(const Stack& src)
+{
+    if(this == &src)
+        return *this;
+
+    Stack tmp(src);
+    swap(*this, tmp);
+    return *this;
 }
 
 Stack::Stack(Stack&& src) noexcept
@@ -249,6 +289,15 @@ void Stack::moveFrom(Stack& src) noexcept
     src.size = 0;
     src.startPointer = nullptr;
     src.startPointer = nullptr;
+}
+
+void Stack::swap(Stack& first, Stack& second) noexcept
+{
+    using std::swap;
+
+    swap(first.size, second.size);
+    swap(first.startPointer, second.startPointer);
+    swap(first.topPointer, second.topPointer);
 }
 
 
